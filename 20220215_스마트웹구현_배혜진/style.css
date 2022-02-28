@@ -1,0 +1,53 @@
+#container{
+    width: fit-content;
+    margin: 30px auto;
+    text-align: center;
+    user-select: none;
+}
+#notice{
+    color: #666;
+}
+p:not(#notice){
+    font-weight: bold;
+    color: #333;
+    background-color: aquamarine;
+}
+.allnums, .allmynums{
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    font-size: 30px;
+    font-weight: bold;
+    background-color: #eee;
+    border-radius: 50%;
+    line-height: 100px;
+    margin: 5px;
+}
+#allnums, #allmynums{
+    padding: 10px;
+}
+#plus{
+    font-size: 35px;
+}
+h2{
+    display: inline-block;
+    text-align: center;
+    margin: 20px;
+}
+fieldset{
+    width: fit-content;
+    margin: 20px auto;
+    padding: 20px;
+}
+legend{
+    font-weight: bold;
+}
+label{
+    display: inline-block;
+    width: 80px;
+    margin: 5px;
+}
+input:checked + span{
+    color: blue;
+    font-weight: bold;
+}

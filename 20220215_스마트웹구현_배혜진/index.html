@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style.css">
+    <title>로또 당첨 확인</title>
+</head>
+<body>
+    <div id="container">
+        <img src="./images/lotto.jpg">
+        <p id="notice">새로고침 시 로또 번호가 변경됩니다.</p>
+        
+        <hr>
+        <div id="allnums">
+            <p>당첨 번호</p>
+        </div>
+        <br><hr>
+        <div id="allmynums">
+            <p>나의 번호</p>
+        </div>
+        <br><hr>
+        
+        <h2 id="result">숫자 6개를 선택 후<br>확인 버튼을 눌러주세요</h2>
+
+        <form id="lotto">
+            <fieldset id="mynum">
+                <legend>숫자를 선택해 주세요</legend>
+            </fieldset>
+            <input id="smt" type="submit" value="결과 확인">
+            <input id="rst" type="reset" value="다시 입력">
+        </form>
+    </div>
+</body>
+<script src="./main.js"></script>
+</html>
