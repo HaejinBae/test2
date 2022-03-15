@@ -6,20 +6,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        a{
+            margin: 5px;
+        }
         img{
             height: 50px;
+        }
+        .inCart, .products{
+            width: 170px;
+            padding: 10px;
+        }
+        .inCart button{
+            float: right;
+            margin: 15px 0;
+        }
+        #product_page, #mycart{
+            background-color: #bbb;
+            width: 200px;
+            padding: 5px;
+            float: left;
+            margin: 5px;
+            height: 330px
+        }
+        #mycart{
+            overflow: scroll;
         }
     </style>
 </head>
 <body>
     <h1>test2</h1>
-    <a href="./stest.html">go</a>
-    <button onclick="testClear();">clear</button>
-    <br><br>
-    <button id="0" onclick="plus(0,'b');">b</button>
-    <button id="1" onclick="plus(1,'c');">c</button>
-    <button id="2" onclick="plus(2,'d');">d</button>
-    <div id="test"></div>
+    
+    <div id="product_page">
+        <h3>products</h3>
+        <div class="products">
+            <img src="./images/1 (1).png">
+            <button id="e" class="plusbtn" onclick="plus('e','kick','./images/1 (1).png');">kick</button>
+        </div>
+        <div class="products">
+            <img src="./images/4.png">
+            <button id="f" class="plusbtn" onclick="plus('f','domestic','./images/4.png');">domestic</button>
+        </div>
+        <div class="products">
+            <img src="./images/1.png">
+            <button id="g" class="plusbtn" onclick="plus('g','primitive','./images/1.png');">primitive</button>
+        </div>
+        <a href="./stest.html">&lt;perv page</a>
+        <a href="./stest2.html">next page&gt;</a>
+    </div>
+
+
+    <div id="mycart">
+        <span><b>my cart</b></span>
+        <button onclick="testClear();" style="float: right;">clear</button>
+        <hr>
+
+        <div id="test"></div>
+    </div>
+
 </body>
 <script src="./stest.js"></script>
 </html>

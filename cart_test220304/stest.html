@@ -6,20 +6,63 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <style>
+        a{
+            margin: 5px;
+        }
         img{
             height: 50px;
+        }
+        .inCart, .products{
+            width: 170px;
+            padding: 10px;
+        }
+        .inCart button{
+            float: right;
+            margin: 15px 0;
+        }
+        #product_page, #mycart{
+            background-color: #bbb;
+            width: 200px;
+            padding: 5px;
+            float: left;
+            margin: 5px;
+            height: 330px
+        }
+        #mycart{
+            overflow: scroll;
         }
     </style>
 </head>
 <body>
     <h1>test1</h1>
-    <a href="./stest2.html">go</a>
-    <button onclick="testClear();">clear</button>
-    <br><br>
-    <button id="0" onclick="plus(0,'b');">b</button>
-    <button id="1" onclick="plus(1,'c');">c</button>
-    <button id="2" onclick="plus(2,'d');">d</button>
-    <div id="test"></div>
+    
+    <div id="product_page">
+        <h3>products</h3>
+        <div class="products">
+            <img src="./images/bear.jpg">
+            <button id="b" class="plusbtn" onclick="plus('b','bear','./images/bear.jpg');">bear</button>
+        </div>
+        <div class="products">
+            <img src="./images/mush1.png">
+            <button id="c" class="plusbtn" onclick="plus('c','mushroom','./images/mush1.png');">mushroom</button>
+        </div>
+        <div class="products">
+            <img src="./images/Frame0.png">
+            <button id="d" class="plusbtn" onclick="plus('d','mario','./images/Frame0.png');">mario</button>
+        </div>
+        <a href="./stest.html">&lt;perv page</a>
+        <a href="./stest2.html">next page&gt;</a>
+    </div>
+
+
+    <div id="mycart">
+        <span><b>my cart</b></span>
+        <button onclick="testClear();" style="float: right;">clear</button>
+        <hr>
+
+        <div id="test"></div>
+    </div>
+    
 </body>
 <script src="./stest.js"></script>
 </html>

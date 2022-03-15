@@ -1,23 +1,28 @@
 'use strict';
 
+// let keys = ['b','c','d'];
+let btns = document.getElementsByClassName('plusbtn');
+let btn_keys = [];
+for(let i=0;i<btns.length;i++){
+    btn_keys[i] = btns[i].getAttribute('id');
+}
+console.log(btn_keys);
+
 if(sessionStorage.foo!=undefined){
     document.getElementById('test').innerHTML = sessionStorage.foo;
-    for(let i=0;i<3;i++){
-        toggle(i);
-    }
+    btn_keys.forEach(v => {
+        toggle(v);
+    });
 }
 
-function plus(key,val){
-    switch(key){
-        case 0: val=`<div>${val}<img src="./images/bear.jpg">
-        <button onclick="ex(${key});">x</button></div>`; break;
-        case 1: val=`<div>${val}<img src="./images/mush1.png">
-        <button onclick="ex(${key});">x</button></div>`; break;
-        case 2: val=`<div>${val}<img src="./images/Frame0.png">
-        <button onclick="ex(${key});">x</button></div>`; break;
-    }
+
+
+function plus(key,val,img_src){
     sessionStorage.setItem(key,val);
-    document.getElementById('test').innerHTML += sessionStorage.getItem(key);
+    let data=`<div class="inCart"><img src="${img_src}">${val}
+        <button onclick="ex('${key}');">x</button></div>`;
+        //ex()의 인자를 문자열로 받아야 함에 주의
+    document.getElementById('test').innerHTML += data;
     sessionStorage.foo = document.getElementById('test').innerHTML;
     toggle(key);
 }
@@ -38,17 +43,20 @@ function ex(key){
 
 function testClear(){
     document.getElementById('test').innerHTML = null;
-    for(let i=0;i<3;i++){
-        document.getElementById(`${i}`).disabled = false;
-    }
+    btn_keys.forEach(v => {
+        document.getElementById(v).disabled = false;
+    });
     sessionStorage.clear();
 }
 
 function toggle(key){
-    if(sessionStorage.getItem(key)==undefined){
-        document.getElementById(`${key}`).disabled = false;
-    }else{
-        document.getElementById(`${key}`).disabled = true;
+    let plusbtn = document.getElementById(key);
+    if(plusbtn!=undefined){
+        if(sessionStorage.getItem(key)==undefined){
+            plusbtn.disabled = false;
+        }else{
+            plusbtn.disabled = true;
+        }
     }
 }
 
