@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <style>
         a{
             margin: 5px;
@@ -22,14 +23,14 @@
         }
         #product_page, #mycart{
             background-color: #bbb;
-            width: 200px;
+            width: 210px;
             padding: 5px;
             float: left;
             margin: 5px;
             height: 330px
         }
         #mycart{
-            overflow: scroll;
+            overflow-y: scroll;
         }
     </style>
 </head>
@@ -38,20 +39,22 @@
     
     <div id="product_page">
         <h3>products</h3>
-        <div class="products">
-            <img src="./images/bear.jpg">
-            <button id="b" class="plusbtn" onclick="plus('b','bear','./images/bear.jpg');">bear</button>
-        </div>
-        <div class="products">
-            <img src="./images/mush1.png">
-            <button id="c" class="plusbtn" onclick="plus('c','mushroom','./images/mush1.png');">mushroom</button>
-        </div>
-        <div class="products">
-            <img src="./images/Frame0.png">
-            <button id="d" class="plusbtn" onclick="plus('d','mario','./images/Frame0.png');">mario</button>
-        </div>
-        <a href="./stest.html">&lt;perv page</a>
-        <a href="./stest2.html">next page&gt;</a>
+        <section id="inProducts">
+            <div class="products">
+                <img src="./images/bear.jpg">
+                <button id="b" class="plusbtn" onclick="plus('b','bear','./images/bear.jpg');">bear</button>
+            </div>
+            <div class="products">
+                <img src="./images/mush1.png">
+                <button id="c" class="plusbtn" onclick="plus('c','mushroom','./images/mush1.png');">mushroom</button>
+            </div>
+            <div class="products">
+                <img src="./images/Frame0.png">
+                <button id="d" class="plusbtn" onclick="plus('d','mario','./images/Frame0.png');">mario</button>
+            </div>
+        </section>
+        <button onclick="chgProd(1);">&lt;perv page</button>
+        <button onclick="chgProd(2);">next page&gt;</button>
     </div>
 
 
@@ -64,5 +67,7 @@
     </div>
     
 </body>
+
+<script src="./chgProducts.js"></script>
 <script src="./stest.js"></script>
 </html>

@@ -3,17 +3,22 @@
 // let keys = ['b','c','d'];
 let btns = document.getElementsByClassName('plusbtn');
 let btn_keys = [];
-for(let i=0;i<btns.length;i++){
-    btn_keys[i] = btns[i].getAttribute('id');
+function init(){
+    let btns = document.getElementsByClassName('plusbtn');
+    let btn_keys = [];
+    for(let i=0;i<btns.length;i++){
+        btn_keys[i] = btns[i].getAttribute('id');
+    }
+    console.log(btn_keys);
+    
+    if(sessionStorage.foo!=undefined){
+        document.getElementById('test').innerHTML = sessionStorage.foo;
+        btn_keys.forEach(v => {
+            toggle(v);
+        });
+    }
 }
-console.log(btn_keys);
-
-if(sessionStorage.foo!=undefined){
-    document.getElementById('test').innerHTML = sessionStorage.foo;
-    btn_keys.forEach(v => {
-        toggle(v);
-    });
-}
+init();
 
 
 
@@ -58,6 +63,11 @@ function toggle(key){
             plusbtn.disabled = true;
         }
     }
+}
+
+function chgProd(page){
+    $("#inProducts").load(`./products.html #inProducts${page}`);
+    init();
 }
 
 

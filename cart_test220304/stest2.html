@@ -22,14 +22,14 @@
         }
         #product_page, #mycart{
             background-color: #bbb;
-            width: 200px;
+            width: 210px;
             padding: 5px;
             float: left;
             margin: 5px;
             height: 330px
         }
         #mycart{
-            overflow: scroll;
+            overflow-y: scroll;
         }
     </style>
 </head>
@@ -38,18 +38,20 @@
     
     <div id="product_page">
         <h3>products</h3>
-        <div class="products">
-            <img src="./images/1 (1).png">
-            <button id="e" class="plusbtn" onclick="plus('e','kick','./images/1 (1).png');">kick</button>
-        </div>
-        <div class="products">
-            <img src="./images/4.png">
-            <button id="f" class="plusbtn" onclick="plus('f','domestic','./images/4.png');">domestic</button>
-        </div>
-        <div class="products">
-            <img src="./images/1.png">
-            <button id="g" class="plusbtn" onclick="plus('g','primitive','./images/1.png');">primitive</button>
-        </div>
+        <section id="inProducts2">
+            <div class="products">
+                <img src="./images/1 (1).png">
+                <button id="e" class="plusbtn" onclick="plus('e','kick','./images/1 (1).png');">kick</button>
+            </div>
+            <div class="products">
+                <img src="./images/4.png">
+                <button id="f" class="plusbtn" onclick="plus('f','domestic','./images/4.png');">domestic</button>
+            </div>
+            <div class="products">
+                <img src="./images/1.png">
+                <button id="g" class="plusbtn" onclick="plus('g','primitive','./images/1.png');">primitive</button>
+            </div>
+        </section>
         <a href="./stest.html">&lt;perv page</a>
         <a href="./stest2.html">next page&gt;</a>
     </div>
