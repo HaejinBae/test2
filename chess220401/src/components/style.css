@@ -1,0 +1,19 @@
+.board-row{
+clear: both;
+}
+.square{
+    float: left;
+    width: 60px;
+    height: 60px;
+    font-size: 40px;
+    border: 1px solid black;
+    margin: -1px -1px 0 0;
+    background-color: burlywood;
+}
+
+.board-row:not(.board-row:nth-child(2n)) .square:nth-child(2n){
+    background-color: white;
+}
+.board-row:nth-child(2n) .square:not(.square:nth-child(2n)){
+    background-color: white;
+}
