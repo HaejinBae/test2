@@ -1,6 +1,9 @@
 #board{
     width: 480px;
 }
+#selected{
+    clear: both;
+}
 
 .board-row{
 clear: both;

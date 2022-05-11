@@ -92,19 +92,60 @@ export default class Game extends React.Component{
         this.state = {
             // history: [{squares: Array(64).fill(null)}],
             history: [{squares: row}],
-            selected:'',
-            WIsNext: true
+            selected:[],
+            next: 'white'
         };
         console.log(this.state.history);
     }
 
     selectedPiece(p){
+        
+        let s='';
+        let po=[];
+        let cmp='';
+        let sval=document.getElementById('sval').innerHTML;
+        let spos=document.getElementById('spos').innerHTML;
+        let scmp=document.getElementById('scmp').innerHTML;
+        let mov;
+        
         this.setState({
             history: this.state.history,
             selected:p,
-            WIsNext: this.state.WIsNext
+            next: this.state.next
         });
-        console.log(this.state.selected);
+        // this.state.selected=p; //원인?
+        
+        po=p[1];
+        if(p[0]!=''&&p[2]==this.state.next){ 
+            s=p[0];
+            sval=s;
+            spos=po;
+            scmp=cmp;
+        }
+        if(this.state.next==scmp&&sval!=''){ //현재 차레 플레이어와 같은 진영의 말 선택 시, 말이 있는(value가 존재하는) 칸만 이동 가능
+            console.log(sval+","+spos);
+            this.state.history[0].squares[po[0]][po[1]].value=sval;
+            this.state.history[0].squares[spos[0]][spos[1]].value=s;
+            console.log(this.state.history[0].squares[po[0]][po[1]].value);
+            
+            this.state.history[0].squares[po[0]][po[1]].camp=scmp;
+            this.state.history[0].squares[spos[0]][spos[1]].camp=cmp;
+            console.log(this.state.history[0].squares[po[0]][po[1]].camp);
+            
+
+            this.setState({
+                history: this.state.history,
+                selected:[],
+                next: (this.state.next=='white'? 'black':'white')
+            });
+            console.log("next:"+this.state.next);
+            sval='';
+            spos=[];
+            scmp='';
+        }else{
+            return;
+        }
+
     }
 
 
@@ -117,10 +158,12 @@ export default class Game extends React.Component{
                 <div className="game-board">
                     <Board select={(p)=>this.selectedPiece(p)} squares={current.squares}/>
                 </div>
-                <div className="selected">
-                    selected:{this.state.selected[0]}<br/>
-                    pos:{this.state.selected[1]}<br/>
-                    camp:{this.state.selected[2]}
+                <div id="selected">
+                    <ul>
+                        <li id="sval">{this.state.selected[0]}</li>
+                        <li id="spos">{this.state.selected[1]}</li>
+                        <li id="scmp">{this.state.selected[2]}</li>
+                    </ul>
                 </div>
             </div>
         );
