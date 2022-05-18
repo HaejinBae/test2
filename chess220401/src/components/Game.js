@@ -106,6 +106,75 @@ export default class Game extends React.Component{
         let po=[];
         //이동 가능한 칸의 좌표를 저장할 배열
         let movea=[];
+        //선택한 말의 이동가능한 칸을 계산하는 함수
+        var rook_movable = ()=>{
+            let go = Array(4).fill(true);
+            for(let i=1;i<8;i++){ 
+                //가로이동
+                if((p[1][1]-i)>=0 && current.squares[p[1][0]][p[1][1]-i].camp!=this.state.next && go[0]==true){ 
+                    console.log('horizonal-');
+                    console.log(current.squares[p[1][0]][p[1][1]-i].camp);
+                    movea.push([p[1][0],p[1][1]-i]);
+                }else{
+                    go[0]=false;
+                }
+                if((p[1][1]+i)<=7 && current.squares[p[1][0]][p[1][1]+i].camp!=this.state.next && go[1]==true){
+                    console.log('horizonal+');
+                    console.log(current.squares[p[1][0]][p[1][1]+i].camp);
+                    movea.push([p[1][0],p[1][1]+i]);
+                }else{
+                    go[1]=false;
+                }
+                //세로이동
+                if((p[1][0]-i)>=0 && current.squares[p[1][0]-i][p[1][1]].camp!=this.state.next && go[2]==true){ 
+                    console.log('vertical-');
+                    console.log(current.squares[p[1][0]-i][p[1][1]].camp);
+                    movea.push([p[1][0]-i,p[1][1]]);
+                }else{
+                    go[2]=false;
+                }
+                if((p[1][0]+i)<=7 && current.squares[p[1][0]+i][p[1][1]].camp!=this.state.next && go[3]==true){
+                    console.log('vertical+');
+                    console.log(current.squares[p[1][0]+i][p[1][1]].camp);
+                    movea.push([p[1][0]+i,p[1][1]]);
+                }else{
+                    go[3]=false;
+                }
+            }
+        };
+        var bishop_moveable = ()=>{
+            let go = Array(4).fill(true);
+            for(let i=1;i<8;i++){
+                if( (p[1][0]-i)>=0 && (p[1][1]-i)>=0 && current.squares[p[1][0]-i][p[1][1]-i].camp!=this.state.next && go[0]==true){ 
+                    console.log('left-');
+                    console.log(current.squares[p[1][0]-i][p[1][1]-i].camp);
+                    movea.push([p[1][0]-i,p[1][1]-i]);
+                }else{
+                    go[0]=false;
+                }
+                if((p[1][0]+i)<=7 && (p[1][1]+i)<=7 && current.squares[p[1][0]+i][p[1][1]+i].camp!=this.state.next && go[1]==true){
+                    console.log('right+');
+                    console.log(current.squares[p[1][0]+i][p[1][1]+i].camp);
+                    movea.push([p[1][0]+i,p[1][1]+i]);
+                }else{
+                    go[1]=false;
+                }
+                if((p[1][0]-i)>=0 && (p[1][1]+i)<=7 && current.squares[p[1][0]-i][p[1][1]+i].camp!=this.state.next && go[2]==true){ 
+                    console.log('left+');
+                    console.log(current.squares[p[1][0]-i][p[1][1]+i].camp);
+                    movea.push([p[1][0]-i,p[1][1]+i]);
+                }else{
+                    go[2]=false;
+                }
+                if((p[1][0]+i)<=7 && (p[1][1]-i)>=0 && current.squares[p[1][0]+i][p[1][1]-i].camp!=this.state.next && go[3]==true){
+                    console.log('right-');
+                    console.log(current.squares[p[1][0]+i][p[1][1]-i].camp);
+                    movea.push([p[1][0]+i,p[1][1]-i]);
+                }else{
+                    go[3]=false;
+                }
+            }
+        };
         //html상에 표시된 선택된 칸의 정보 불러오기
         let sval=document.getElementById('sval').innerHTML;
         let spos=document.getElementById('spos').innerHTML;
@@ -180,21 +249,28 @@ export default class Game extends React.Component{
                         }
                     }
                     break;
+                case 'rook':
+                    {
+                        rook_movable();
+                    }
+                    break;
+                case 'bishop':
+                    {
+                        bishop_moveable();
+                    }
+                    break;
+                case 'queen':
+                    {
+                        rook_movable();
+                        bishop_moveable();
+                    }
+                    break;
                 // case 'knight':
                 //     {
 
                 //     }
                 //     break;
                 // case 'king':
-                //     {}
-                //     break;
-                // case 'bishop':
-                //     {}
-                //     break;
-                // case 'rook':
-                //     {}
-                //     break;
-                // case 'queen':
                 //     {}
                 //     break;
             }
