@@ -106,73 +106,187 @@ export default class Game extends React.Component{
         let po=[];
         //이동 가능한 칸의 좌표를 저장할 배열
         let movea=[];
+        let unmovea=[];
         //선택한 말의 이동가능한 칸을 계산하는 함수
-        var rook_movable = ()=>{
+        var pawn_moveable = (camp,movea_space)=>{
+            if(camp=='white'){
+                if((p[1][0]-1)>=0 && current.squares[p[1][0]-1][p[1][1]].value==''){ //폰의 한 칸 앞이 존재하고 비었다면
+                    movea_space.push([p[1][0]-1,p[1][1]]);
+                }
+                // console.log(p[1]);
+                if(p[1][0]==6 && current.squares[p[1][0]-1][p[1][1]].value=='' 
+                    && current.squares[p[1][0]-2][p[1][1]].value==''){ //세로 좌표가 그대로이고 한칸 앞과 두칸 앞이 비었다면
+                        movea_space.push([p[1][0]-2,p[1][1]]);
+                }
+                // console.log(!((p[1][1]-1)<0) || !((p[1][1]+1)>7));
+                if((p[1][0]-1)>=0) { //폰의 한 칸 앞이 존재하고
+                    console.log('pawn catch');
+                    //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                    if(((p[1][1]-1)>=0) && current.squares[p[1][0]-1][p[1][1]-1].camp=='black'){ 
+                        console.log('front left');
+                        movea_space.push([p[1][0]-1,p[1][1]-1]);
+                    }
+                    //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                    if(((p[1][1]+1)<=7) && current.squares[p[1][0]-1][p[1][1]+1].camp=='black'){ 
+                        console.log('front right');
+                        movea_space.push([p[1][0]-1,p[1][1]+1]);
+                    }
+                }
+            }else if(camp=='black'){
+                if((p[1][0]+1)<=7 && current.squares[p[1][0]+1][p[1][1]].value==''){ //폰의 한 칸 앞이 존재하고 비었다면
+                    movea_space.push([p[1][0]+1,p[1][1]]);
+                }
+                // console.log(p[1]);
+                if(p[1][0]==1 && current.squares[p[1][0]+1][p[1][1]].value=='' 
+                    && current.squares[p[1][0]+2][p[1][1]].value==''){ //세로 좌표가 그대로이고 한칸 앞과 두칸 앞이 비었다면
+                        movea_space.push([p[1][0]+2,p[1][1]]);
+                }
+                // console.log(!((p[1][1]-1)<0) || !((p[1][1]+1)>7));
+                if((p[1][0]+1)>=0) { //폰의 한 칸 앞이 존재하고
+                    console.log('pawn catch');
+                    //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                    if(((p[1][1]-1)>=0) && current.squares[p[1][0]+1][p[1][1]-1].camp=='white'){ 
+                        console.log('front left');
+                        movea_space.push([p[1][0]+1,p[1][1]-1]);
+                    }
+                    //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                    if(((p[1][1]+1)<=7) && current.squares[p[1][0]+1][p[1][1]+1].camp=='white'){ 
+                        console.log('front right');
+                        movea_space.push([p[1][0]+1,p[1][1]+1]);
+                    }
+                }
+            }
+        };
+        var rook_moveable = (camp,movea_space)=>{
             let go = Array(4).fill(true);
             for(let i=1;i<8;i++){ 
                 //가로이동
-                if((p[1][1]-i)>=0 && current.squares[p[1][0]][p[1][1]-i].camp!=this.state.next && go[0]==true){ 
+                if((p[1][1]-i)>=0 && current.squares[p[1][0]][p[1][1]-i].camp!=camp && go[0]==true){ 
                     console.log('horizonal-');
                     console.log(current.squares[p[1][0]][p[1][1]-i].camp);
-                    movea.push([p[1][0],p[1][1]-i]);
+                    movea_space.push([p[1][0],p[1][1]-i]);
                 }else{
                     go[0]=false;
                 }
-                if((p[1][1]+i)<=7 && current.squares[p[1][0]][p[1][1]+i].camp!=this.state.next && go[1]==true){
+                if((p[1][1]+i)<=7 && current.squares[p[1][0]][p[1][1]+i].camp!=camp && go[1]==true){
                     console.log('horizonal+');
                     console.log(current.squares[p[1][0]][p[1][1]+i].camp);
-                    movea.push([p[1][0],p[1][1]+i]);
+                    movea_space.push([p[1][0],p[1][1]+i]);
                 }else{
                     go[1]=false;
                 }
                 //세로이동
-                if((p[1][0]-i)>=0 && current.squares[p[1][0]-i][p[1][1]].camp!=this.state.next && go[2]==true){ 
+                if((p[1][0]-i)>=0 && current.squares[p[1][0]-i][p[1][1]].camp!=camp && go[2]==true){ 
                     console.log('vertical-');
                     console.log(current.squares[p[1][0]-i][p[1][1]].camp);
-                    movea.push([p[1][0]-i,p[1][1]]);
+                    movea_space.push([p[1][0]-i,p[1][1]]);
                 }else{
                     go[2]=false;
                 }
-                if((p[1][0]+i)<=7 && current.squares[p[1][0]+i][p[1][1]].camp!=this.state.next && go[3]==true){
+                if((p[1][0]+i)<=7 && current.squares[p[1][0]+i][p[1][1]].camp!=camp && go[3]==true){
                     console.log('vertical+');
                     console.log(current.squares[p[1][0]+i][p[1][1]].camp);
-                    movea.push([p[1][0]+i,p[1][1]]);
+                    movea_space.push([p[1][0]+i,p[1][1]]);
                 }else{
                     go[3]=false;
                 }
             }
         };
-        var bishop_moveable = ()=>{
+        var bishop_moveable = (camp,movea_space)=>{
             let go = Array(4).fill(true);
             for(let i=1;i<8;i++){
-                if( (p[1][0]-i)>=0 && (p[1][1]-i)>=0 && current.squares[p[1][0]-i][p[1][1]-i].camp!=this.state.next && go[0]==true){ 
+                if( (p[1][0]-i)>=0 && (p[1][1]-i)>=0 && current.squares[p[1][0]-i][p[1][1]-i].camp!=camp && go[0]==true){ 
                     console.log('left-');
                     console.log(current.squares[p[1][0]-i][p[1][1]-i].camp);
-                    movea.push([p[1][0]-i,p[1][1]-i]);
+                    movea_space.push([p[1][0]-i,p[1][1]-i]);
                 }else{
                     go[0]=false;
                 }
-                if((p[1][0]+i)<=7 && (p[1][1]+i)<=7 && current.squares[p[1][0]+i][p[1][1]+i].camp!=this.state.next && go[1]==true){
+                if((p[1][0]+i)<=7 && (p[1][1]+i)<=7 && current.squares[p[1][0]+i][p[1][1]+i].camp!=camp && go[1]==true){
                     console.log('right+');
                     console.log(current.squares[p[1][0]+i][p[1][1]+i].camp);
-                    movea.push([p[1][0]+i,p[1][1]+i]);
+                    movea_space.push([p[1][0]+i,p[1][1]+i]);
                 }else{
                     go[1]=false;
                 }
-                if((p[1][0]-i)>=0 && (p[1][1]+i)<=7 && current.squares[p[1][0]-i][p[1][1]+i].camp!=this.state.next && go[2]==true){ 
+                if((p[1][0]-i)>=0 && (p[1][1]+i)<=7 && current.squares[p[1][0]-i][p[1][1]+i].camp!=camp && go[2]==true){ 
                     console.log('left+');
                     console.log(current.squares[p[1][0]-i][p[1][1]+i].camp);
-                    movea.push([p[1][0]-i,p[1][1]+i]);
+                    movea_space.push([p[1][0]-i,p[1][1]+i]);
                 }else{
                     go[2]=false;
                 }
-                if((p[1][0]+i)<=7 && (p[1][1]-i)>=0 && current.squares[p[1][0]+i][p[1][1]-i].camp!=this.state.next && go[3]==true){
+                if((p[1][0]+i)<=7 && (p[1][1]-i)>=0 && current.squares[p[1][0]+i][p[1][1]-i].camp!=camp && go[3]==true){
                     console.log('right-');
                     console.log(current.squares[p[1][0]+i][p[1][1]-i].camp);
-                    movea.push([p[1][0]+i,p[1][1]-i]);
+                    movea_space.push([p[1][0]+i,p[1][1]-i]);
                 }else{
                     go[3]=false;
                 }
+            }
+        };
+        var knight_moveable = (camp,movea_space)=>{
+            if(p[1][1]-2>=0){
+                if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]-2].camp!=camp){
+                    movea_space.push([p[1][0]-1,p[1][1]-2]);
+                }
+                if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]-2].camp!=camp){
+                    movea_space.push([p[1][0]+1,p[1][1]-2]);
+                }
+            }
+            if(p[1][1]+2<=7){
+                if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]+2].camp!=camp){
+                    movea_space.push([p[1][0]-1,p[1][1]+2]);
+                }
+                if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]+2].camp!=camp){
+                    movea_space.push([p[1][0]+1,p[1][1]+2]);
+                }
+            }
+            if(p[1][0]+2<=7){
+                if(p[1][1]-1>=0 && current.squares[p[1][0]+2][p[1][1]-1].camp!=camp){
+                    movea_space.push([p[1][0]+2,p[1][1]-1]);
+                }
+                if(p[1][1]+1<=7 && current.squares[p[1][0]+2][p[1][1]+1].camp!=camp){
+                    movea_space.push([p[1][0]+2,p[1][1]+1]);
+                }
+            }
+            if(p[1][0]-2>=0){
+                if(p[1][1]-1>=0 && current.squares[p[1][0]-2][p[1][1]-1].camp!=camp){
+                    movea_space.push([p[1][0]-2,p[1][1]-1]);
+                }
+                if(p[1][1]+1<=7 && current.squares[p[1][0]-2][p[1][1]+1].camp!=camp){
+                    movea_space.push([p[1][0]-2,p[1][1]+1]);
+                }
+            }
+        };
+        var king_moveable = (camp,movea_space)=>{
+            if(p[1][1]-1>=0){
+                if(current.squares[p[1][0]][p[1][1]-1].camp!=camp){
+                    movea_space.push([p[1][0],p[1][1]-1]);
+                }
+                if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]-1].camp!=camp){
+                    movea_space.push([p[1][0]-1,p[1][1]-1]);
+                }
+                if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]-1].camp!=camp){
+                    movea_space.push([p[1][0]+1,p[1][1]-1]);
+                }
+            }
+            if(p[1][1]+1<=7){
+                if(current.squares[p[1][0]][p[1][1]+1].camp!=camp){
+                    movea_space.push([p[1][0],p[1][1]+1]);
+                }
+                if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]+1].camp!=camp){
+                    movea_space.push([p[1][0]-1,p[1][1]+1]);
+                }
+                if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]+1].camp!=camp){
+                    movea_space.push([p[1][0]+1,p[1][1]+1]);
+                }
+            }
+            if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]].camp!=camp){
+                movea_space.push([p[1][0]+1,p[1][1]]);
+            }
+            if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]].camp!=camp){
+                movea_space.push([p[1][0]-1,p[1][1]]);
             }
         };
         //html상에 표시된 선택된 칸의 정보 불러오기
@@ -197,83 +311,167 @@ export default class Game extends React.Component{
             scmp=''; //말 선택과 동시에 아래의 말 이동이 동작하지 않도록 진영을 비움
             // console.log(sval+","+spos+","+scmp);
 
-            switch(p[3]){
-                case 'pawn':
-                    {
-                        if(p[2]=='white'){
-                            if((p[1][0]-1)>=0 && current.squares[p[1][0]-1][p[1][1]].value==''){ //폰의 한 칸 앞이 존재하고 비었다면
-                                movea.push([p[1][0]-1,p[1][1]]);
-                            }
-                            // console.log(p[1]);
-                            if(p[1][0]==6 && current.squares[p[1][0]-1][p[1][1]].value=='' 
-                                && current.squares[p[1][0]-2][p[1][1]].value==''){ //세로 좌표가 그대로이고 한칸 앞과 두칸 앞이 비었다면
-                                    movea.push([p[1][0]-2,p[1][1]]);
-                            }
-                            // console.log(!((p[1][1]-1)<0) || !((p[1][1]+1)>7));
-                            if((p[1][0]-1)>=0) { //폰의 한 칸 앞이 존재하고
-                                console.log('pawn catch');
-                                //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
-                                if(((p[1][1]-1)>=0) && current.squares[p[1][0]-1][p[1][1]-1].camp=='black'){ 
-                                    console.log('front left');
-                                    movea.push([p[1][0]-1,p[1][1]-1]);
-                                }
-                                //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
-                                if(((p[1][1]+1)<=7) && current.squares[p[1][0]-1][p[1][1]+1].camp=='black'){ 
-                                    console.log('front right');
-                                    movea.push([p[1][0]-1,p[1][1]+1]);
-                                }
-                            }
-                        }else if(p[2]=='black'){
-                            if((p[1][0]+1)<=7 && current.squares[p[1][0]+1][p[1][1]].value==''){ //폰의 한 칸 앞이 존재하고 비었다면
-                                movea.push([p[1][0]+1,p[1][1]]);
-                            }
-                            // console.log(p[1]);
-                            if(p[1][0]==1 && current.squares[p[1][0]+1][p[1][1]].value=='' 
-                                && current.squares[p[1][0]+2][p[1][1]].value==''){ //세로 좌표가 그대로이고 한칸 앞과 두칸 앞이 비었다면
-                                    movea.push([p[1][0]+2,p[1][1]]);
-                            }
-                            // console.log(!((p[1][1]-1)<0) || !((p[1][1]+1)>7));
-                            if((p[1][0]+1)>=0) { //폰의 한 칸 앞이 존재하고
-                                console.log('pawn catch');
-                                //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
-                                if(((p[1][1]-1)>=0) && current.squares[p[1][0]+1][p[1][1]-1].camp=='white'){ 
-                                    console.log('front left');
-                                    movea.push([p[1][0]+1,p[1][1]-1]);
-                                }
-                                //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
-                                if(((p[1][1]+1)<=7) && current.squares[p[1][0]+1][p[1][1]+1].camp=='white'){ 
-                                    console.log('front right');
-                                    movea.push([p[1][0]+1,p[1][1]+1]);
-                                }
-                            }
-                        }
-                    }
-                    break;
-                case 'rook':
-                    {
-                        rook_movable();
-                    }
-                    break;
-                case 'bishop':
-                    {
-                        bishop_moveable();
-                    }
-                    break;
-                case 'queen':
-                    {
-                        rook_movable();
-                        bishop_moveable();
-                    }
-                    break;
-                // case 'knight':
-                //     {
+            // switch(p[3]){
+            //     case 'pawn':
+            //         {
+            //             pawn_moveable(p[2]);
+            //         }
+            //         break;
+            //     case 'rook':
+            //         {
+            //             rook_moveable(this.state.next);
+            //         }
+            //         break;
+            //     case 'bishop':
+            //         {
+            //             bishop_moveable(this.state.next);
+            //         }
+            //         break;
+            //     case 'queen':
+            //         {
+            //             rook_moveable(this.state.next);
+            //             bishop_moveable(this.state.next);
+            //         }
+            //         break;
+            //     case 'knight':
+            //         {
+            //             knight_moveable(this.state.next);
+            //         }
+            //         break;
+            //     case 'king':
+            //         {
+            //             if(p[1][1]-1>=0){
+            //                 if(current.squares[p[1][0]][p[1][1]-1].camp!=this.state.camp){
+            //                     movea.push([p[1][0],p[1][1]-1]);
+            //                 }
+            //                 if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]-1].camp!=this.state.camp){
+            //                     movea.push([p[1][0]-1,p[1][1]-1]);
+            //                 }
+            //                 if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]-1].camp!=this.state.camp){
+            //                     movea.push([p[1][0]+1,p[1][1]-1]);
+            //                 }
+            //             }
+            //             if(p[1][1]+1<=7){
+            //                 if(current.squares[p[1][0]][p[1][1]+1].camp!=this.state.camp){
+            //                     movea.push([p[1][0],p[1][1]+1]);
+            //                 }
+            //                 if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]+1].camp!=this.state.camp){
+            //                     movea.push([p[1][0]-1,p[1][1]+1]);
+            //                 }
+            //                 if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]+1].camp!=this.state.camp){
+            //                     movea.push([p[1][0]+1,p[1][1]+1]);
+            //                 }
+            //             }
+            //             if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]].camp!=this.state.camp){
+            //                 movea.push([p[1][0]+1,p[1][1]]);
+            //             }
+            //             if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]].camp!=this.state.camp){
+            //                 movea.push([p[1][0]-1,p[1][1]]);
+            //             }
 
-                //     }
-                //     break;
-                // case 'king':
-                //     {}
-                //     break;
-            }
+            //             let rival = (this.state.next=='white'? 'black':'white');
+            //             for(let i=0;i<8;i++){
+            //                 for(let j=0;j<8;j++){
+            //                     if(current.squares[i][j].camp==rival){
+                                    
+            //                     }
+            //                 }
+            //             }
+            //             unmovea.concat();
+            //         }
+            //         break;
+            // }
+            var calc_moveable = (piece,camp,movea_space)=>{
+                switch(piece){
+                    case 'pawn':
+                        {
+                            pawn_moveable(camp,movea_space);
+                        }
+                        break;
+                    case 'rook':
+                        {
+                            rook_moveable(camp,movea_space);
+                        }
+                        break;
+                    case 'bishop':
+                        {
+                            bishop_moveable(camp,movea_space);
+                        }
+                        break;
+                    case 'queen':
+                        {
+                            rook_moveable(camp,movea_space);
+                            bishop_moveable(camp,movea_space);
+                        }
+                        break;
+                    case 'knight':
+                        {
+                            knight_moveable(camp,movea_space);
+                        }
+                        break;
+                    case 'king':
+                        {
+                            king_moveable(camp,movea_space);
+                        }
+                        break;
+                }
+            };
+            calc_moveable(p[3],this.state.next,movea);
+            if(p[3]=='king')
+                {
+                    // if(p[1][1]-1>=0){
+                    //     if(current.squares[p[1][0]][p[1][1]-1].camp!=this.state.camp){
+                    //         movea.push([p[1][0],p[1][1]-1]);
+                    //     }
+                    //     if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]-1].camp!=this.state.camp){
+                    //         movea.push([p[1][0]-1,p[1][1]-1]);
+                    //     }
+                    //     if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]-1].camp!=this.state.camp){
+                    //         movea.push([p[1][0]+1,p[1][1]-1]);
+                    //     }
+                    // }
+                    // if(p[1][1]+1<=7){
+                    //     if(current.squares[p[1][0]][p[1][1]+1].camp!=this.state.camp){
+                    //         movea.push([p[1][0],p[1][1]+1]);
+                    //     }
+                    //     if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]+1].camp!=this.state.camp){
+                    //         movea.push([p[1][0]-1,p[1][1]+1]);
+                    //     }
+                    //     if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]+1].camp!=this.state.camp){
+                    //         movea.push([p[1][0]+1,p[1][1]+1]);
+                    //     }
+                    // }
+                    // if(p[1][0]+1<=7 && current.squares[p[1][0]+1][p[1][1]].camp!=this.state.camp){
+                    //     movea.push([p[1][0]+1,p[1][1]]);
+                    // }
+                    // if(p[1][0]-1>=0 && current.squares[p[1][0]-1][p[1][1]].camp!=this.state.camp){
+                    //     movea.push([p[1][0]-1,p[1][1]]);
+                    // }
+
+                    // let king_movea = [];
+                    // let rival = (this.state.next=='white'? 'black':'white');
+                    // if(movea.length>0){
+                    // for(let i=0;i<8;i++){
+                    //     for(let j=0;j<8;j++){
+                    //         if(current.squares[i][j].camp==rival){
+                    //             calc_moveable(current.squares[i][j].piece,rival,unmovea);
+                    //             movea.forEach(v,i => {
+                    //                 for(let k=0;k<unmovea.length;k++){
+                    //                         if(!(v[0]==unmovea[k][0] && v[1]==unmovea[k][1])){
+                    //                             movea.splice(i,1);
+                    //                         }
+                    //                     }
+                    //                 });
+                    //             }
+                    //         }
+                    //     }
+                    // }
+
+                    // king_movea = movea.filter(function(ma){
+                    //     return for(let k=0;k<unmovea.length;k++){!(v[0]==unmovea[k][0] && v[1]==unmovea[k][1])};
+                    // });
+                    
+                }
             this.state.moveable=movea;
             console.log('s:'+this.state.moveable);
             // for(let i=0;i<movea.length;i++){
