@@ -4,9 +4,7 @@
 #selected{
     clear: both;
 }
-/* [moveable=true]{
-    background-color: rgb(156, 122, 78);
-} */
+
 
 .board-row{
 clear: both;
@@ -26,4 +24,8 @@ clear: both;
 }
 .board-row:nth-child(2n) .square:not(.square:nth-child(2n)){
     background-color: white;
+}
+
+.square.moveable{
+    background-color: rgb(156, 122, 78);
 }

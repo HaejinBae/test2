@@ -76,7 +76,7 @@ export default class Game extends React.Component{
                 }
                 else{
                     col.push(
-                        {camp:'', value:''}
+                        {camp:'', value:'', piece:''}
                     );
                 }
                 // console.log(col[i]);
@@ -106,6 +106,8 @@ export default class Game extends React.Component{
         //현재 선택한 칸의 좌표를 저장할 변수
         let po=[];
         //이동 가능한 칸의 좌표를 저장할 배열
+        // let movea=[];
+        // let unmovea=[];
         let movea=[];
         let unmovea=[];
         //선택한 말의 이동가능한 칸을 계산하는 함수
@@ -113,48 +115,56 @@ export default class Game extends React.Component{
         var pawn_moveable = (xpos,ypos,camp,movea_space)=>{
             if(camp=='white'){
                 if((ypos-1)>=0 && current.squares[ypos-1][xpos].value==''){ //폰의 한 칸 앞이 존재하고 비었다면
-                    movea_space.push([ypos-1,xpos]);
+                    console.log((ypos-1)+","+xpos);
+                    movea_space.push([(ypos-1),xpos]);
                 }
                 // console.log(p[1]);
                 if(ypos==6 && current.squares[ypos-1][xpos].value=='' 
                     && current.squares[ypos-2][xpos].value==''){ //세로 좌표가 그대로이고 한칸 앞과 두칸 앞이 비었다면
-                        movea_space.push([ypos-2,xpos]);
+                        console.log((ypos-2)+","+xpos);
+                        movea_space.push([(ypos-2),xpos]);
                 }
                 // console.log(!((p[1][1]-1)<0) || !((p[1][1]+1)>7));
                 if((ypos-1)>=0) { //폰의 한 칸 앞이 존재하고
-                    console.log('pawn catch');
+                    // console.log('pawn catch');
                     //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
                     if(((xpos-1)>=0) && current.squares[ypos-1][xpos-1].camp=='black'){ 
                         console.log('front left');
-                        movea_space.push([ypos-1,xpos-1]);
+                        console.log((ypos-1)+","+(xpos-1));
+                        movea_space.push([(ypos-1),(xpos-1)]);
                     }
                     //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
                     if(((xpos+1)<=7) && current.squares[ypos-1][xpos+1].camp=='black'){ 
                         console.log('front right');
-                        movea_space.push([ypos-1,xpos+1]);
+                        console.log((ypos-1)+","+(xpos+1));
+                        movea_space.push([(ypos-1),(xpos+1)]);
                     }
                 }
             }else if(camp=='black'){
                 if((ypos+1)<=7 && current.squares[ypos+1][xpos].value==''){ //폰의 한 칸 앞이 존재하고 비었다면
-                    movea_space.push([ypos+1,xpos]);
+                    console.log((ypos+1)+","+xpos);
+                    movea_space.push([(ypos+1),xpos]);
                 }
                 // console.log(p[1]);
                 if(ypos==1 && current.squares[ypos+1][xpos].value=='' 
                     && current.squares[ypos+2][xpos].value==''){ //세로 좌표가 그대로이고 한칸 앞과 두칸 앞이 비었다면
-                        movea_space.push([ypos+2,xpos]);
+                        console.log((ypos+2)+","+xpos);
+                        movea_space.push([(ypos+2),xpos]);
                 }
                 // console.log(!((p[1][1]-1)<0) || !((p[1][1]+1)>7));
                 if((ypos+1)<=7) { //폰의 한 칸 앞이 존재하고
-                    console.log('pawn catch');
+                    // console.log('pawn catch');
                     //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
                     if(((xpos-1)>=0) && current.squares[ypos+1][xpos-1].camp=='white'){ 
                         console.log('front left');
-                        movea_space.push([ypos+1,xpos-1]);
+                        console.log((ypos+1)+","+(xpos-1));
+                        movea_space.push([(ypos+1),(xpos-1)]);
                     }
                     //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
                     if(((xpos+1)<=7) && current.squares[ypos+1][xpos+1].camp=='white'){ 
                         console.log('front right');
-                        movea_space.push([ypos+1,xpos+1]);
+                        console.log((ypos+1)+","+(xpos+1));
+                        movea_space.push([(ypos+1),(xpos+1)]);
                     }
                 }
             }
@@ -167,7 +177,7 @@ export default class Game extends React.Component{
                 if((xpos-i)>=0 && current.squares[ypos][xpos-i].camp!=camp && go[0]==true){ 
                     console.log('horizonal-');
                     console.log(current.squares[ypos][xpos-i].camp);
-                    movea_space.push([ypos,xpos-i]);
+                    movea_space.push([ypos,(xpos-i)]);
                     //i칸 왼쪽의 진영이 상대방일 때 
                     if(current.squares[ypos][xpos-i].camp==rival){
                         go[0]=false;
@@ -179,7 +189,7 @@ export default class Game extends React.Component{
                 if((xpos+i)<=7 && current.squares[ypos][xpos+i].camp!=camp && go[1]==true){
                     console.log('horizonal+');
                     console.log(current.squares[ypos][xpos+i].camp);
-                    movea_space.push([ypos,xpos+i]);
+                    movea_space.push([ypos,(xpos+i)]);
                     //i칸 오른쪽의 진영이 상대방일 때
                     if(current.squares[ypos][xpos+i].camp==rival){
                         go[1]=false;
@@ -192,7 +202,7 @@ export default class Game extends React.Component{
                 if((ypos-i)>=0 && current.squares[ypos-i][xpos].camp!=camp && go[2]==true){ 
                     console.log('vertical-');
                     console.log(current.squares[ypos-i][xpos].camp);
-                    movea_space.push([ypos-i,xpos]);
+                    movea_space.push([(ypos-i),xpos]);
                     //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos-i][xpos].camp==rival){
                         go[2]=false;
@@ -204,7 +214,7 @@ export default class Game extends React.Component{
                 if((ypos+i)<=7 && current.squares[ypos+i][xpos].camp!=camp && go[3]==true){
                     console.log('vertical+');
                     console.log(current.squares[ypos+i][xpos].camp);
-                    movea_space.push([ypos+i,xpos]);
+                    movea_space.push([(ypos+i),xpos]);
                     //i칸 아래쪽의 진영이 상대방일 때
                     if(current.squares[ypos+i][xpos].camp==rival){
                         go[3]=false;
@@ -222,7 +232,7 @@ export default class Game extends React.Component{
                 if((ypos-i)>=0 && (xpos-i)>=0 && current.squares[ypos-i][xpos-i].camp!=camp && go[0]==true){ 
                     console.log('left-');
                     console.log(current.squares[ypos-i][xpos-i].camp);
-                    movea_space.push([ypos-i,xpos-i]);
+                    movea_space.push([(ypos-i),(xpos-i)]);
                     //해당 칸의 진영이 상대 진영일 때
                     if(current.squares[ypos-i][xpos-i].camp==rival){
                         go[0]=false;
@@ -235,7 +245,7 @@ export default class Game extends React.Component{
                 if((ypos+i)<=7 && (xpos+i)<=7 && current.squares[ypos+i][xpos+i].camp!=camp && go[1]==true){
                     console.log('right+');
                     console.log(current.squares[ypos+i][xpos+i].camp);
-                    movea_space.push([ypos+i,xpos+i]);
+                    movea_space.push([(ypos+i),(xpos+i)]);
                     //해당 칸의 진영이 상대 진영일 때
                     if(current.squares[ypos+i][xpos+i].camp==rival){
                         go[1]=false;
@@ -248,7 +258,7 @@ export default class Game extends React.Component{
                 if((ypos-i)>=0 && (xpos+i)<=7 && current.squares[ypos-i][xpos+i].camp!=camp && go[2]==true){ 
                     console.log('right-');
                     console.log(current.squares[ypos-i][xpos+i].camp);
-                    movea_space.push([ypos-i,xpos+i]);
+                    movea_space.push([(ypos-i),(xpos+i)]);
                     //해당 칸의 진영이 상대 진영일 때
                     if(current.squares[ypos-i][xpos+i].camp==rival){
                         go[2]=false;
@@ -261,7 +271,7 @@ export default class Game extends React.Component{
                 if((ypos+i)<=7 && (xpos-i)>=0 && current.squares[ypos+i][xpos-i].camp!=camp && go[3]==true){
                     console.log('left+');
                     console.log(current.squares[ypos+i][xpos-i].camp);
-                    movea_space.push([ypos+i,xpos-i]);
+                    movea_space.push([(ypos+i),(xpos-i)]);
                     //해당 칸의 진영이 상대 진영일 때
                     if(current.squares[ypos+i][xpos-i].camp==rival){
                         go[3]=false;
@@ -272,71 +282,80 @@ export default class Game extends React.Component{
             }
         };
         var knight_moveable = (xpos,ypos,camp,movea_space)=>{
+            console.log(ypos+","+xpos);
             //좌측 상하
             if(xpos-2>=0){
                 if(ypos-1>=0 && current.squares[ypos-1][xpos-2].camp!=camp){
-                    movea_space.push([ypos-1,xpos-2]);
+                    console.log((ypos-1)+","+(xpos-2));
+                    movea_space.push([(ypos-1),(xpos-2)]);
                 }
                 if(ypos+1<=7 && current.squares[ypos+1][xpos-2].camp!=camp){
-                    movea_space.push([ypos+1,xpos-2]);
+                    console.log((ypos+1)+","+(xpos-2));
+                    movea_space.push([(ypos+1),(xpos-2)]);
                 }
             }
             //우측 상하
             if(xpos+2<=7){
                 if(ypos-1>=0 && current.squares[ypos-1][xpos+2].camp!=camp){
-                    movea_space.push([ypos-1,xpos+2]);
+                    console.log((ypos-1)+","+(xpos+2));
+                    movea_space.push([(ypos-1),(xpos+2)]);
                 }
                 if(ypos+1<=7 && current.squares[ypos+1][xpos+2].camp!=camp){
-                    movea_space.push([ypos+1,xpos+2]);
+                    console.log((ypos+1)+","+(xpos+2));
+                    movea_space.push([(ypos+1),(xpos+2)]);
                 }
             }
             //하단 좌우
             if(ypos+2<=7){
                 if(xpos-1>=0 && current.squares[ypos+2][xpos-1].camp!=camp){
-                    movea_space.push([ypos+2,xpos-1]);
+                    console.log((ypos+2)+","+(xpos-1));
+                    movea_space.push([(ypos+2),(xpos-1)]);
                 }
                 if(xpos+1<=7 && current.squares[ypos+2][xpos+1].camp!=camp){
-                    movea_space.push([ypos+2,xpos+1]);
+                    console.log((ypos+2)+","+(xpos+1));
+                    movea_space.push([(ypos+2),(xpos+1)]);
                 }
             }
             //상단 좌우
             if(ypos-2>=0){
                 if(xpos-1>=0 && current.squares[ypos-2][xpos-1].camp!=camp){
-                    movea_space.push([ypos-2,xpos-1]);
+                    console.log((ypos-2)+","+(xpos-1));
+                    movea_space.push([(ypos-2),(xpos-1)]);
                 }
                 if(xpos+1<=7 && current.squares[ypos-2][xpos+1].camp!=camp){
-                    movea_space.push([ypos-2,xpos+1]);
+                    console.log((ypos-2)+","+(xpos+1));
+                    movea_space.push([(ypos-2),(xpos+1)]);
                 }
             }
         };
         var king_moveable = (xpos,ypos,camp,movea_space)=>{
             if(xpos-1>=0){
                 if(current.squares[ypos][xpos-1].camp!=camp){
-                    movea_space.push([ypos,xpos-1]);
+                    movea_space.push([ypos,(xpos-1)]);
                 }
                 if(ypos-1>=0 && current.squares[ypos-1][xpos-1].camp!=camp){
-                    movea_space.push([ypos-1,xpos-1]);
+                    movea_space.push([(ypos-1),(xpos-1)]);
                 }
                 if(ypos+1<=7 && current.squares[ypos+1][xpos-1].camp!=camp){
-                    movea_space.push([ypos+1,xpos-1]);
+                    movea_space.push([(ypos+1),(xpos-1)]);
                 }
             }
             if(xpos+1<=7){
                 if(current.squares[ypos][xpos+1].camp!=camp){
-                    movea_space.push([ypos,xpos+1]);
+                    movea_space.push([ypos,(xpos+1)]);
                 }
                 if(ypos-1>=0 && current.squares[ypos-1][xpos+1].camp!=camp){
-                    movea_space.push([ypos-1,xpos+1]);
+                    movea_space.push([(ypos-1),(xpos+1)]);
                 }
                 if(ypos+1<=7 && current.squares[ypos+1][xpos+1].camp!=camp){
-                    movea_space.push([ypos+1,xpos+1]);
+                    movea_space.push([(ypos+1),(xpos+1)]);
                 }
             }
             if(ypos+1<=7 && current.squares[ypos+1][xpos].camp!=camp){
-                movea_space.push([ypos+1,xpos]);
+                movea_space.push([(ypos+1),xpos]);
             }
             if(ypos-1>=0 && current.squares[ypos-1][xpos].camp!=camp){
-                movea_space.push([ypos-1,xpos]);
+                movea_space.push([(ypos-1),xpos]);
             }
         };
         //html상에 표시된 선택된 칸의 정보 불러오기
@@ -362,6 +381,10 @@ export default class Game extends React.Component{
             // console.log(sval+","+spos+","+scmp);
 
             var calc_moveable = (xpos,ypos,piece,camp,movea_space)=>{
+                rival = (camp=='white'? 'black':'white');
+
+                console.log("camp:"+camp);
+                console.log("rival:"+rival);
                 switch(piece){
                     case 'pawn':
                         {
@@ -396,37 +419,41 @@ export default class Game extends React.Component{
                         break;
                 }
             };
+
             calc_moveable(p[1][1],p[1][0],p[3],this.state.next,movea);
             if(p[3]=='king')
                 {
-                    let king_movea = [];
-                    console.log(rival);
+                    let next_rival = (this.state.next=='white'? 'black':'white');
+                    console.log("next_rival:"+next_rival);
                     if(movea.length>0){
                         for(let i=0;i<8;i++){
                             for(let j=0;j<8;j++){
-                                if(current.squares[i][j].camp==rival){
-                                    console.log(current.squares[i][j].camp==rival);
+                                if(current.squares[i][j].camp==next_rival){
+                                    console.log(current.squares[i][j].camp==next_rival);
                                     console.log(current.squares[i][j].camp + current.squares[i][j].piece);
-                                    calc_moveable(i,j,current.squares[i][j].piece,rival,unmovea);
+                                    calc_moveable(j,i,current.squares[i][j].piece,next_rival,unmovea);
                                 }
                             }
                         }
                     }
+                    unmovea = new Set(unmovea);
                     console.log(unmovea);
-                    for(let k=0;k<unmovea.length;k++){
-                        king_movea = movea.filter((v)=>{
-                            return !(v[0]==unmovea[k][0] && v[1]==unmovea[k][1]);
+
+                    for(let item of unmovea.keys()){
+                        movea = movea.filter(v=>{
+                            return !(v[0]==item[0] && v[1]==item[1]);
                         });
                     }
-                    console.log(king_movea);
-                    movea=king_movea;
+                    console.log(movea);
                 }
             
             this.state.moveable=movea;
             console.log('s:'+this.state.moveable);
-            // for(let i=0;i<movea.length;i++){
-            //     current.squares[this.state.moveable[i][0]][this.state.moveable[i][1]].moveable=true;
-            // }
+            
+            for(let i=0;i<this.state.moveable.length;i++){
+                console.log(document.getElementsByClassName("board-row")[this.state.moveable[i][0]].children[this.state.moveable[i][1]].classList);
+                document.getElementsByClassName("board-row")[this.state.moveable[i][0]].children[this.state.moveable[i][1]].classList.add('moveable');
+            }
             // console.log(current.squares[this.state.moveable[0][0]][this.state.moveable[0][1]].moveable);
         //     //옮길 수 있는 칸에 클래스 더해서 해당 클래스를 가진 요소의 배경색 css로 변경
         }
@@ -474,6 +501,9 @@ export default class Game extends React.Component{
                 spos=[];
                 scmp='';
                 spc='';
+            }
+            for(let i=0;i<this.state.moveable.length;i++){
+                document.getElementsByClassName("board-row")[this.state.moveable[i][0]].children[this.state.moveable[i][1]].classList.remove('moveable');
             }
         }
 
