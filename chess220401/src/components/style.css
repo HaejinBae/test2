@@ -26,6 +26,7 @@ clear: both;
     background-color: white;
 }
 
+
 .square.moveable{
-    background-color: rgb(156, 122, 78);
+    background-color: rgb(80, 59, 29) !important;
 }

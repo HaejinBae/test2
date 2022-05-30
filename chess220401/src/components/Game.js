@@ -94,7 +94,9 @@ export default class Game extends React.Component{
             history: [{squares: row}],
             selected:[],
             moveable:[],
-            next: 'white'
+            next: 'white',
+            black_king_pos: [0,4],
+            white_king_pos: [7,4]
         };
         console.log(this.state.history);
     }
@@ -106,8 +108,6 @@ export default class Game extends React.Component{
         //현재 선택한 칸의 좌표를 저장할 변수
         let po=[];
         //이동 가능한 칸의 좌표를 저장할 배열
-        // let movea=[];
-        // let unmovea=[];
         let movea=[];
         let unmovea=[];
         //선택한 말의 이동가능한 칸을 계산하는 함수
@@ -358,6 +358,46 @@ export default class Game extends React.Component{
                 movea_space.push([(ypos-1),xpos]);
             }
         };
+
+        var calc_moveable = (xpos,ypos,piece,camp,movea_space)=>{
+            rival = (camp=='white'? 'black':'white');
+
+            console.log("camp:"+camp);
+            console.log("rival:"+rival);
+            switch(piece){
+                case 'pawn':
+                    {
+                        pawn_moveable(xpos,ypos,camp,movea_space);
+                    }
+                    break;
+                case 'rook':
+                    {
+                        rook_moveable(xpos,ypos,camp,movea_space);
+                    }
+                    break;
+                case 'bishop':
+                    {
+                        bishop_moveable(xpos,ypos,camp,movea_space);
+                    }
+                    break;
+                case 'queen':
+                    {
+                        rook_moveable(xpos,ypos,camp,movea_space);
+                        bishop_moveable(xpos,ypos,camp,movea_space);
+                    }
+                    break;
+                case 'knight':
+                    {
+                        knight_moveable(xpos,ypos,camp,movea_space);
+                    }
+                    break;
+                case 'king':
+                    {
+                        king_moveable(xpos,ypos,camp,movea_space);
+                    }
+                    break;
+            }
+        };
         //html상에 표시된 선택된 칸의 정보 불러오기
         let sval=document.getElementById('sval').innerHTML;
         let spos=document.getElementById('spos').innerHTML;
@@ -375,87 +415,55 @@ export default class Game extends React.Component{
         //말이 있는 칸의, 현재 차례와 맞는 진영의 말 선택 시 진영 정보를 비워 둠
         //이동할 칸 클릭 시 차례와 맞는 진영의 칸이 아니므로 동작하지 않음
         if(p[0]!=''&&p[2]==this.state.next){ 
+            //배경색 css 원래대로
+            if(this.state.moveable.length>0){
+                for(let i=0;i<this.state.moveable.length;i++){
+                    document.getElementsByClassName("board-row")[this.state.moveable[i][0]].children[this.state.moveable[i][1]].classList.remove('moveable');
+                }
+            }
             // sval=p[0]; //선택한 말의 표시값
             // spos=p[1]; //선택한 말의 좌표
             scmp=''; //말 선택과 동시에 아래의 말 이동이 동작하지 않도록 진영을 비움
             // console.log(sval+","+spos+","+scmp);
 
-            var calc_moveable = (xpos,ypos,piece,camp,movea_space)=>{
-                rival = (camp=='white'? 'black':'white');
-
-                console.log("camp:"+camp);
-                console.log("rival:"+rival);
-                switch(piece){
-                    case 'pawn':
-                        {
-                            pawn_moveable(xpos,ypos,camp,movea_space);
-                        }
-                        break;
-                    case 'rook':
-                        {
-                            rook_moveable(xpos,ypos,camp,movea_space);
-                        }
-                        break;
-                    case 'bishop':
-                        {
-                            bishop_moveable(xpos,ypos,camp,movea_space);
-                        }
-                        break;
-                    case 'queen':
-                        {
-                            rook_moveable(xpos,ypos,camp,movea_space);
-                            bishop_moveable(xpos,ypos,camp,movea_space);
-                        }
-                        break;
-                    case 'knight':
-                        {
-                            knight_moveable(xpos,ypos,camp,movea_space);
-                        }
-                        break;
-                    case 'king':
-                        {
-                            king_moveable(xpos,ypos,camp,movea_space);
-                        }
-                        break;
-                }
-            };
+            
 
             calc_moveable(p[1][1],p[1][0],p[3],this.state.next,movea);
-            if(p[3]=='king')
-                {
-                    let next_rival = (this.state.next=='white'? 'black':'white');
-                    console.log("next_rival:"+next_rival);
-                    if(movea.length>0){
-                        for(let i=0;i<8;i++){
-                            for(let j=0;j<8;j++){
-                                if(current.squares[i][j].camp==next_rival){
-                                    console.log(current.squares[i][j].camp==next_rival);
-                                    console.log(current.squares[i][j].camp + current.squares[i][j].piece);
-                                    calc_moveable(j,i,current.squares[i][j].piece,next_rival,unmovea);
-                                }
+
+            //킹끼리 만날 수 없으므로 단순계산으로 충분
+            if(p[3]=='king'){
+                let next_rival = (this.state.next=='white'? 'black':'white');
+                console.log("next_rival:"+next_rival);
+                if(movea.length>0){
+                    for(let i=0;i<8;i++){
+                        for(let j=0;j<8;j++){
+                            if(current.squares[i][j].camp==next_rival){
+                                console.log(current.squares[i][j].camp==next_rival);
+                                console.log(current.squares[i][j].camp + current.squares[i][j].piece);
+                                calc_moveable(j,i,current.squares[i][j].piece,next_rival,unmovea);
                             }
                         }
                     }
-                    unmovea = new Set(unmovea);
-                    console.log(unmovea);
-
-                    for(let item of unmovea.keys()){
-                        movea = movea.filter(v=>{
-                            return !(v[0]==item[0] && v[1]==item[1]);
-                        });
-                    }
-                    console.log(movea);
                 }
+                unmovea = new Set(unmovea);
+                console.log(unmovea);
+
+                for(let item of unmovea.keys()){
+                    movea = movea.filter(v=>{
+                        return !(v[0]==item[0] && v[1]==item[1]);
+                    });
+                }
+                console.log(movea);
+            }
             
             this.state.moveable=movea;
             console.log('s:'+this.state.moveable);
             
+            //옮길 수 있는 칸에 클래스 더해서 해당 클래스를 가진 요소의 배경색 css로 변경
             for(let i=0;i<this.state.moveable.length;i++){
                 console.log(document.getElementsByClassName("board-row")[this.state.moveable[i][0]].children[this.state.moveable[i][1]].classList);
                 document.getElementsByClassName("board-row")[this.state.moveable[i][0]].children[this.state.moveable[i][1]].classList.add('moveable');
             }
-            // console.log(current.squares[this.state.moveable[0][0]][this.state.moveable[0][1]].moveable);
-        //     //옮길 수 있는 칸에 클래스 더해서 해당 클래스를 가진 요소의 배경색 css로 변경
         }
 
         //말 이동
@@ -488,6 +496,28 @@ export default class Game extends React.Component{
                 current.squares[po[0]][po[1]].piece=spc; //현재 클릭한 칸을 html상에 출력된 선택된 말 정보로 변경(말 종류)
                 current.squares[spos[0]][spos[1]].piece=''; //html상에 출력된 선택된 말의 원래 좌표의 칸을 비우기
                 console.log(current.squares[po[0]][po[1]].piece);
+
+                //체크 판단
+                if(spc=='king'){
+                    if(scmp=='white'){
+                        this.state.white_king_pos = [po[0],po[1]];
+                    }else if(scmp=='black'){
+                        this.state.black_king_pos = [po[0],po[1]];
+                    }
+                }else{
+                    let chk_check = [];
+                    let rival_king_pos = (scmp=='white'? this.state.black_king_pos:this.state.white_king_pos);
+                    console.log(rival_king_pos);
+                    calc_moveable(po[1],po[0],spc,scmp,chk_check);
+                    for(let i=0;i<chk_check.length;i++){
+                        console.log(chk_check[i]);
+                        if(chk_check[i][0]==rival_king_pos[0] && chk_check[i][1]==rival_king_pos[1]){
+                            console.log('!!!!!!!!!!!check!!!!!!!!!!!!');
+                            break;
+                        }
+                    }
+                }
+
                 
                 //이동 후 선택된 말 정보 초기화, 플레이어 순서 변경
                 this.setState({
@@ -502,6 +532,10 @@ export default class Game extends React.Component{
                 scmp='';
                 spc='';
             }
+
+            
+
+            //배경색 css 원래대로
             for(let i=0;i<this.state.moveable.length;i++){
                 document.getElementsByClassName("board-row")[this.state.moveable[i][0]].children[this.state.moveable[i][1]].classList.remove('moveable');
             }
