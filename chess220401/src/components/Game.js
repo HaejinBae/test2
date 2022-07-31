@@ -525,6 +525,16 @@ export default class Game extends React.Component{
                         this.state.black_king_pos = [po[0],po[1]];
                     }
                 }else{
+                    //프로모션
+                    // if(spc=='pawn'){
+                    //     if(scmp=='white'){
+                    //         if(po[1]==0){
+                    //             //
+                    //         }
+                    //     }else if(scmp=='black'){
+                    //         //
+                    //     }
+                    // }
                     let chk_check = [];
                     let rival_king_pos = (scmp=='white'? this.state.black_king_pos:this.state.white_king_pos);
                     console.log(rival_king_pos);
