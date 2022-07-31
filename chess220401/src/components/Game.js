@@ -96,7 +96,8 @@ export default class Game extends React.Component{
             moveable:[],
             next: 'white',
             black_king_pos: [0,4],
-            white_king_pos: [7,4]
+            white_king_pos: [7,4],
+            check_path: null
         };
         console.log(this.state.history);
     }
@@ -456,6 +457,24 @@ export default class Game extends React.Component{
                 console.log(movea);
             }
             
+            //체크 상황에 움직일 수 있는 경로
+            if(this.state.check_path!=null){
+                console.log('c:'+this.state.check_path);
+                console.log('d:'+movea);
+                if(p[3]!='king'){
+                    let a_check_movea = [];
+                    for(let j=0;j<this.state.check_path.length;j++){
+                        console.log(this.state.check_path[j][0]+','+this.state.check_path[j][1]);
+                        for(let i=0;i<movea.length;i++){
+                            if(movea[i][0]==this.state.check_path[j][0] && movea[i][1]==this.state.check_path[j][1]){
+                                a_check_movea.push(this.state.check_path[j]);
+                            }
+                        }
+                    }
+                    movea = a_check_movea;
+                }
+            }
+
             this.state.moveable=movea;
             console.log('s:'+this.state.moveable);
             
@@ -479,6 +498,7 @@ export default class Game extends React.Component{
                 // console.log(po[0]);
                 if(this.state.moveable[i][0]==po[0]&&this.state.moveable[i][1]==po[1]){
                     able=true;
+                    break;
                 }
             }
             console.log(able);
@@ -513,6 +533,43 @@ export default class Game extends React.Component{
                         console.log(chk_check[i]);
                         if(chk_check[i][0]==rival_king_pos[0] && chk_check[i][1]==rival_king_pos[1]){
                             console.log('!!!!!!!!!!!check!!!!!!!!!!!!');
+                            let check_movea = [];
+                            calc_moveable(po[1],po[0],spc,scmp,check_movea);
+                            check_movea = check_movea.filter(v=>{
+                                if(po[0]<=rival_king_pos[0]){
+                                    if(po[1]<=rival_king_pos[1]){
+                                        return (
+                                            (v[0]<=rival_king_pos[0] && po[0]<=v[0]) 
+                                            && (v[1]<=rival_king_pos[1] && po[1]<=v[1]) 
+                                            && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
+                                        );
+                                    }else{
+                                        return (
+                                            (v[0]<=rival_king_pos[0] && po[0]<=v[0]) 
+                                            && (v[1]>=rival_king_pos[1] && po[1]>=v[1])
+                                            && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
+                                        );
+                                    }
+                                }else{
+                                    if(po[1]<=rival_king_pos[1]){
+                                        return (
+                                            (v[0]>=rival_king_pos[0] && po[0]>=v[0]) 
+                                            && (v[1]<=rival_king_pos[1] && po[1]<=v[1])
+                                            && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
+                                        );
+                                    }else{
+                                        return (
+                                            (v[0]>=rival_king_pos[0] && po[0]>=v[0]) 
+                                            && (v[1]>=rival_king_pos[1] && po[1]>=v[1])
+                                            && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
+                                        );
+                                    }
+                                }
+                            });
+                            check_movea.push([po[0],po[1]]);
+                            console.log('a:'+check_movea);
+                            this.state.check_path = check_movea;
+
                             break;
                         }
                     }
@@ -524,7 +581,8 @@ export default class Game extends React.Component{
                     // history: history,
                     selected:[],
                     moveable:[],
-                    next: (this.state.next=='white'? 'black':'white')
+                    next: (this.state.next=='white'? 'black':'white'),
+                    check_path:null
                 });
                 // console.log("next:"+this.state.next);
                 sval='';
