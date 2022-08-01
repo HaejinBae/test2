@@ -1,5 +1,6 @@
 import React from "react";
 import Board from "./Board";
+import Pieces from "./Pieces";
 
 export default class Game extends React.Component{
     constructor(props){
@@ -97,7 +98,8 @@ export default class Game extends React.Component{
             next: 'white',
             black_king_pos: [0,4],
             white_king_pos: [7,4],
-            check_path: null
+            check_path: null,
+            promotion: null
         };
         console.log(this.state.history);
     }
@@ -520,21 +522,25 @@ export default class Game extends React.Component{
                 //체크 판단
                 if(spc=='king'){
                     if(scmp=='white'){
-                        this.state.white_king_pos = [po[0],po[1]];
+                        this.state.white_king_pos = [po];
                     }else if(scmp=='black'){
-                        this.state.black_king_pos = [po[0],po[1]];
+                        this.state.black_king_pos = [po];
                     }
                 }else{
                     //프로모션
-                    // if(spc=='pawn'){
-                    //     if(scmp=='white'){
-                    //         if(po[1]==0){
-                    //             //
-                    //         }
-                    //     }else if(scmp=='black'){
-                    //         //
-                    //     }
-                    // }
+                    if(spc=='pawn'){
+                        if(scmp=='white'){
+                            if(po[0]==0){
+                                this.state.promotion = [po];
+                                console.log('pro:'+this.state.promotion);
+                            }
+                        }else if(scmp=='black'){
+                            if(po[0]==7){
+                                this.state.promotion = [po];
+                                console.log('pro:'+this.state.promotion);
+                            }
+                        }
+                    }
                     let chk_check = [];
                     let rival_king_pos = (scmp=='white'? this.state.black_king_pos:this.state.white_king_pos);
                     console.log(rival_king_pos);
@@ -621,6 +627,7 @@ export default class Game extends React.Component{
                 <div className="game-board">
                     <Board select={(p)=>this.selectedPiece(p)} squares={current.squares}/>
                 </div>
+                <Pieces next={this.state.next}/>
                 <div id="selected">
                     <p>now: {this.state.next}</p>
                     <ul>

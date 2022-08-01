@@ -1,8 +1,43 @@
 #board{
     width: 480px;
 }
-#selected{
+#selected, #pieces{
     clear: both;
+}
+#pieces{
+    height: 130px;
+    width:280px;
+    background-color: rgb(92, 155, 209);
+    position:relative;
+    margin-top:90px;
+    border-radius: 5px;
+    text-align: center;
+    padding-top:1px;
+}
+#pieces::after{
+    content:'';
+    width:0;
+    height:0;
+    position:absolute;
+    border-top: 30px solid transparent;
+    border-right: 15px solid transparent;
+    border-left: 15px solid transparent;
+    border-bottom: 30px solid rgb(92, 155, 209);
+    margin-top:-100px;
+    right:10px;
+}
+#pieces button{
+    width: 45px;
+    height: 45px;
+    font-size: 30px;
+    border: 1px solid black;
+    margin: -1px -1px 0 0;
+    background-color: burlywood;
+}
+#pieces p{
+    height:20px;
+    color:white;
+    font-weight: bold;
 }
 
 

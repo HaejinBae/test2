@@ -8,7 +8,6 @@ export default class Square extends Component{
     render(){
         return(
             <button className="square" 
-                piece={this.props.piece} camp={this.props.camp} pos={this.props.pos}
                 onClick={()=>this.props.f([this.props.value,this.props.pos,this.props.camp,this.props.piece])}>
                     {this.props.value}</button>
         );
