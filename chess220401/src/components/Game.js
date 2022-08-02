@@ -681,7 +681,7 @@ export default class Game extends React.Component{
                 <div className="game-board">
                     <Board select={(p)=>this.selectedPiece(p)} squares={current.squares}/>
                 </div>
-                <Pieces next={this.state.next} promotion={(val,pc)=>this.promotion(val,pc)}/>
+                <Pieces next={this.state.next} pro={this.state.promotion} promotion={(val,pc)=>this.promotion(val,pc)}/>
                 <div id="selected">
                     <p>now: {this.state.next}</p>
                     <ul>

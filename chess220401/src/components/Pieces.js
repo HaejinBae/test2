@@ -13,7 +13,7 @@ export default class Pieces extends Component{
             queen: this.props.next=='black'?'♛':'♕'
         };
         return(
-            <div id="pieces">
+            <div id="pieces" className={this.props.pro==null?'hidden':this.props.next=='white'?'white':'black'}>
                 <p>PROMOTION</p>
                 <button id="rook" onClick={()=>this.props.promotion(pro.rook,'rook')}>
                     {pro.rook}</button>

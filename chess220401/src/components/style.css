@@ -4,6 +4,9 @@
 #selected, #pieces{
     clear: both;
 }
+#pieces.hidden{
+    display: none;
+}
 #pieces{
     height: 130px;
     width:280px;
