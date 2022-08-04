@@ -147,10 +147,14 @@ export default class Game extends React.Component{
 
             
 
-            this.calc_moveable(p[1][1],p[1][0],p[3],this.state.next,movea);
 
+            this.calc_moveable(p[1][1],p[1][0],p[3],this.state.next,movea);
             //킹끼리 만날 수 없으므로 단순계산으로 충분
             if(p[3]=='king'){
+                // this.calc_king_check_moveable(this.state.next,movea,unmovea);
+                // console.log('movea'+movea);
+                //필터는 동작하는데 나오면 부활 문제
+
                 let next_rival = (this.state.next=='white'? 'black':'white');
                 console.log("next_rival:"+next_rival);
                 if(movea.length>0){
@@ -174,6 +178,7 @@ export default class Game extends React.Component{
                 }
                 console.log(movea);
             }
+            console.log('movea'+movea);
             
             //체크 상황에 움직일 수 있는 경로
             if(this.state.check_path!=null){
@@ -559,6 +564,33 @@ export default class Game extends React.Component{
             movea_space.push([(ypos-1),xpos]);
         }
     }
+    // calc_king_check_moveable(camp,movea_space,unmovea_space){
+    //     const history=this.state.history;
+    //     const current=history[0];
+    //     console.log(camp);
+    //     let next_rival = (camp=='white'? 'black':'white');
+    //     console.log("next_rival:"+next_rival);
+    //     if(movea_space.length>0){
+    //         for(let i=0;i<8;i++){
+    //             for(let j=0;j<8;j++){
+    //                 if(current.squares[i][j].camp==next_rival){
+    //                     console.log(current.squares[i][j].camp==next_rival);
+    //                     console.log(current.squares[i][j].camp + current.squares[i][j].piece);
+    //                     this.calc_moveable(j,i,current.squares[i][j].piece,next_rival,unmovea_space);
+    //                 }
+    //             }
+    //         }
+    //     }
+    //     unmovea_space = new Set(unmovea_space);
+    //     console.log(unmovea_space);
+
+    //     for(let item of unmovea_space.keys()){
+    //         movea_space = movea_space.filter(v=>{
+    //             return !(v[0]==item[0] && v[1]==item[1]);
+    //         });
+    //     }
+    //     console.log(movea_space);
+    // }
 
     calc_moveable(xpos,ypos,piece,camp,movea_space){
         // let rival = (camp=='white'? 'black':'white');
@@ -604,6 +636,7 @@ export default class Game extends React.Component{
 
     check(xpos,ypos,camp,piece){
         this.state.check_path = null;
+        let rival = (this.state.next=='white'? 'black':'white');
         //움직인 말의 다음 경로를 저장하여 킹이 해당 경로에 포함되는지 확인하기 위한 배열 
         let chk_check = [];
         let rival_king_pos = (camp=='white'? this.state.black_king_pos:this.state.white_king_pos);
@@ -654,6 +687,13 @@ export default class Game extends React.Component{
             }
         }
         console.log('checked?'+this.state.check_path);
+
+        //체크메이트
+        // let rival_king_movea = [];
+        // let rival_king_unmovea = [];
+        // this.king_moveable(rival_king_pos[1],rival_king_pos[0],this.state.next,rival_king_movea);
+        // this.calc_king_check_moveable(this.state.next,rival_king_movea,rival_king_unmovea);
+        
     }
 
     promotion(val,pc){
