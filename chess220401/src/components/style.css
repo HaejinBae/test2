@@ -1,3 +1,11 @@
+.container.white{
+    display: flex;
+    flex-direction: column-reverse;
+}
+.container.black{
+    display: flex;
+    flex-direction: column;
+}
 #board{
     width: 480px;
 }
@@ -12,21 +20,34 @@
     width:280px;
     background-color: rgb(92, 155, 209);
     position:relative;
-    margin-top:90px;
     border-radius: 5px;
     text-align: center;
     padding-top:1px;
+}
+#pieces.white{
+    margin-bottom:30px;
+}
+#pieces.black{
+    margin-top:30px;
 }
 #pieces::after{
     content:'';
     width:0;
     height:0;
     position:absolute;
-    border-top: 30px solid transparent;
     border-right: 15px solid transparent;
     border-left: 15px solid transparent;
+}
+#pieces.black::after{
+    border-top: 30px solid transparent;
     border-bottom: 30px solid rgb(92, 155, 209);
-    margin-top:-100px;
+    top:-50px;
+    right:10px;
+}
+#pieces.white::after{
+    border-bottom: 30px solid transparent;
+    border-top: 30px solid rgb(92, 155, 209);
+    bottom:-50px;
     right:10px;
 }
 #pieces button{
@@ -43,28 +64,52 @@
     font-weight: bold;
 }
 
+@keyframes selected {
+    0%{
+        background-color: transparent;
+    }
+    50%{
+        background-color: rgba(208, 255, 0, 0.548);
+    }
+    100%{
+        background-color: transparent;
+    }
+}
+.selected .square{
+    animation-duration: 2s;
+    animation-name: selected;
+    animation-iteration-count: infinite;
+}
+
 
 .board-row{
 clear: both;
 }
 .square{
+    width: 58px;
+    height: 58px;
+    font-size: 40px;
+    border: none;
+    background-color: transparent;
+}
+.square-container{
     float: left;
     width: 60px;
     height: 60px;
-    font-size: 40px;
+    background-color: burlywood;
     border: 1px solid black;
     margin: -1px -1px 0 0;
-    background-color: burlywood;
+    box-sizing: border-box;
 }
 
-.board-row:not(.board-row:nth-child(2n)) .square:nth-child(2n){
+.board-row:not(.board-row:nth-child(2n)) > .square-container:nth-child(2n){
     background-color: white;
 }
-.board-row:nth-child(2n) .square:not(.square:nth-child(2n)){
+.board-row:nth-child(2n) > .square-container:not(.square-container:nth-child(2n)){
     background-color: white;
 }
 
 
-.square.moveable{
-    background-color: rgb(80, 59, 29) !important;
+.moveable .square{
+    background-color: rgba(0, 255, 179, 0.568) !important;
 }

@@ -127,6 +127,9 @@ export default class Game extends React.Component{
         });
         // this.state.selected=p; //원인?
         
+        for(let i=0;i<64;i++){
+            document.getElementsByClassName("square-container")[i].classList.remove('selected');
+        }
         //말 선택
         //말이 있는 칸의, 현재 차례와 맞는 진영의 말 선택 시 진영 정보를 비워 둠
         //이동할 칸 클릭 시 차례와 맞는 진영의 칸이 아니므로 동작하지 않음
@@ -193,6 +196,7 @@ export default class Game extends React.Component{
             this.state.moveable=movea;
             console.log('s:'+this.state.moveable);
             
+            document.getElementsByClassName("board-row")[p[1][0]].children[p[1][1]].classList.add('selected');
             //옮길 수 있는 칸에 클래스 더해서 해당 클래스를 가진 요소의 배경색 css로 변경
             for(let i=0;i<this.state.moveable.length;i++){
                 console.log(document.getElementsByClassName("board-row")[this.state.moveable[i][0]].children[this.state.moveable[i][1]].classList);
@@ -250,6 +254,8 @@ export default class Game extends React.Component{
                                 for(let i=0;i<64;i++){
                                     document.getElementsByClassName("square")[i].disabled = true;
                                 }
+                                document.getElementsByClassName("container")[0].classList.add("white");
+                                document.getElementsByClassName("container")[0].classList.remove("black");
                             }
                         }else if(scmp=='black'){
                             if(po[0]==7){
@@ -258,6 +264,8 @@ export default class Game extends React.Component{
                                 for(let i=0;i<64;i++){
                                     document.getElementsByClassName("square")[i].disabled = true;
                                 }
+                                document.getElementsByClassName("container")[0].classList.add("black");
+                                document.getElementsByClassName("container")[0].classList.remove("white");
                             }
                         }
                     }
@@ -678,10 +686,12 @@ export default class Game extends React.Component{
 
         return(
             <div className="game">
-                <div className="game-board">
-                    <Board select={(p)=>this.selectedPiece(p)} squares={current.squares}/>
+                <div className="container">
+                    <div className="game-board">
+                        <Board select={(p)=>this.selectedPiece(p)} squares={current.squares}/>
+                    </div>
+                    <Pieces next={this.state.next} pro={this.state.promotion} promotion={(val,pc)=>this.promotion(val,pc)}/>
                 </div>
-                <Pieces next={this.state.next} pro={this.state.promotion} promotion={(val,pc)=>this.promotion(val,pc)}/>
                 <div id="selected">
                     <p>now: {this.state.next}</p>
                     <ul>
