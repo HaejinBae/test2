@@ -4,8 +4,8 @@
 let btns = document.getElementsByClassName('plusbtn');
 let btn_keys = [];
 function init(){
-    let btns = document.getElementsByClassName('plusbtn');
-    let btn_keys = [];
+    btns = document.getElementsByClassName('plusbtn');
+    btn_keys = [];
     for(let i=0;i<btns.length;i++){
         btn_keys[i] = btns[i].getAttribute('id');
     }
@@ -17,8 +17,11 @@ function init(){
             toggle(v);
         });
     }
+    // console.log(btns);
 }
 init();
+// chgProd(1);
+
 
 
 
@@ -47,7 +50,9 @@ function ex(key){
 }
 
 function testClear(){
+    init();
     document.getElementById('test').innerHTML = null;
+    // console.log(btn_keys);
     btn_keys.forEach(v => {
         document.getElementById(v).disabled = false;
     });
@@ -56,18 +61,39 @@ function testClear(){
 
 function toggle(key){
     let plusbtn = document.getElementById(key);
-    if(plusbtn!=undefined){
+    // if(plusbtn!=undefined){
         if(sessionStorage.getItem(key)==undefined){
             plusbtn.disabled = false;
         }else{
             plusbtn.disabled = true;
         }
-    }
+    // }
 }
 
 function chgProd(page){
+    // $("#r").on('click',function(){$("#inProducts").load(`./products.html #inProducts${page}`);});
     $("#inProducts").load(`./products.html #inProducts${page}`);
-    init();
+    // $("#r").trigger('chg');
+    return 'chg';
+    // document.getElementById("r").addEventListener('click',()=>{
+    //     init();
+    //     $("#r").off('click');
+    // });
+    
+    // $("#inProducts").load(window.location.href + ' #inProducts');
+    // let t = document.getElementById('inProducts').innerHTML;
+    // console.log(t);
+    // $(document).ready(function(){
+
+    //     init();
+    // });
+    // $(this).trigger("chgd");
 }
+
+// function e(){
+    // $("#r").on({'chg':()=>{init();}});
+// }
+
+// $("#r").bind('click',function(){$("#inProducts").load(`./products.html #inProducts${page}`);});
 
 
