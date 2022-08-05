@@ -167,16 +167,16 @@ export default class Game extends React.Component{
                             }
                         }
                     }
+                    unmovea = new Set(unmovea);
+                    console.log(unmovea);
+                    
+                    for(let item of unmovea.keys()){
+                        movea = movea.filter(v=>{
+                            return !(v[0]==item[0] && v[1]==item[1]);
+                        });
+                    }
+                    console.log(movea);
                 }
-                unmovea = new Set(unmovea);
-                console.log(unmovea);
-
-                for(let item of unmovea.keys()){
-                    movea = movea.filter(v=>{
-                        return !(v[0]==item[0] && v[1]==item[1]);
-                    });
-                }
-                console.log(movea);
             }
             console.log('movea'+movea);
             
@@ -636,7 +636,6 @@ export default class Game extends React.Component{
 
     check(xpos,ypos,camp,piece){
         this.state.check_path = null;
-        let rival = (this.state.next=='white'? 'black':'white');
         //움직인 말의 다음 경로를 저장하여 킹이 해당 경로에 포함되는지 확인하기 위한 배열 
         let chk_check = [];
         let rival_king_pos = (camp=='white'? this.state.black_king_pos:this.state.white_king_pos);
@@ -687,14 +686,78 @@ export default class Game extends React.Component{
             }
         }
         console.log('checked?'+this.state.check_path);
-
-        //체크메이트
-        // let rival_king_movea = [];
-        // let rival_king_unmovea = [];
-        // this.king_moveable(rival_king_pos[1],rival_king_pos[0],this.state.next,rival_king_movea);
-        // this.calc_king_check_moveable(this.state.next,rival_king_movea,rival_king_unmovea);
-        
+        this.checkmate(rival_king_pos);
     }
+
+    checkmate(rival_king_pos){
+        //체크메이트
+        const history=this.state.history;
+        const current=history[0];
+        let rival_king_movea = [];
+        let rival_king_unmovea = [];
+        let check_unmovea = [];
+        let next_rival = (this.state.next=='white'? 'black':'white');
+        this.king_moveable(rival_king_pos[1],rival_king_pos[0],next_rival,rival_king_movea);
+        console.log('checkmate: '+rival_king_movea.length);
+        console.log("next_rival:"+next_rival);
+
+        //상대 킹이 움직일 수 있는 경로
+        if(rival_king_movea.length>0){
+            for(let i=0;i<8;i++){
+                for(let j=0;j<8;j++){
+                    if(current.squares[i][j].camp==this.state.next){
+                        console.log(current.squares[i][j].camp==this.state.next);
+                        console.log(current.squares[i][j].camp + current.squares[i][j].piece);
+                        this.calc_moveable(j,i,current.squares[i][j].piece,this.state.next,rival_king_unmovea);
+                    }
+                }
+            }
+            rival_king_unmovea = new Set(rival_king_unmovea);
+            console.log(rival_king_unmovea);
+
+            for(let item of rival_king_unmovea.keys()){
+                rival_king_movea = rival_king_movea.filter(v=>{
+                    return !(v[0]==item[0] && v[1]==item[1]);
+                });
+            }
+            console.log(rival_king_movea);
+        }
+
+        //체크한 말을 막거나 잡을 수 있는 말
+        let flag=false;
+        if(this.state.check_path!=null){
+            for(let i=0;i<8;i++){
+                for(let j=0;j<8;j++){
+                    if(current.squares[i][j].camp==next_rival){
+                        console.log(current.squares[i][j].camp==next_rival);
+                        console.log(current.squares[i][j].camp + current.squares[i][j].piece);
+                        this.calc_moveable(j,i,current.squares[i][j].piece,next_rival,check_unmovea);
+                    }
+                }
+            }
+
+            check_unmovea = new Set(check_unmovea);
+            console.log(check_unmovea);
+
+
+            for(let item of check_unmovea.keys()){
+                for(let i=0;i<this.state.check_path.length;i++){
+                    if(item[0]==this.state.check_path[i][0] && item[1]==this.state.check_path[i][1]){
+                        flag = true;
+                        break;
+                    }
+                }
+                if(flag) break;
+            }
+        }
+
+        if(!flag && rival_king_movea.length==0){
+            console.log('!!!!!!!!!!!!!!!!!checkmate!!!!!!!!!!!!!!!!!');
+        }else{
+            console.log('=======continue========');
+        }
+    }
+    
 
     promotion(val,pc){
         const history = this.state.history;
