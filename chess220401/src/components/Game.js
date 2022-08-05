@@ -163,7 +163,7 @@ export default class Game extends React.Component{
                             if(current.squares[i][j].camp==next_rival){
                                 console.log(current.squares[i][j].camp==next_rival);
                                 console.log(current.squares[i][j].camp + current.squares[i][j].piece);
-                                this.calc_moveable(j,i,current.squares[i][j].piece,next_rival,unmovea);
+                                this.calc_moveable(j,i,current.squares[i][j].piece,next_rival,unmovea,true);
                             }
                         }
                     }
@@ -358,6 +358,41 @@ export default class Game extends React.Component{
                 }
                 //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
                 if(((xpos+1)<=7) && current.squares[ypos+1][xpos+1].camp=='white'){ 
+                    console.log('front right');
+                    console.log((ypos+1)+","+(xpos+1));
+                    movea_space.push([(ypos+1),(xpos+1)]);
+                }
+            }
+        }
+    }
+    check_pawn_moveable(xpos,ypos,camp,movea_space){
+        if(camp=='white'){
+            if((ypos-1)>=0) { //폰의 한 칸 앞이 존재하고
+                // console.log('pawn catch');
+                //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                if(((xpos-1)>=0)){ 
+                    console.log('front left');
+                    console.log((ypos-1)+","+(xpos-1));
+                    movea_space.push([(ypos-1),(xpos-1)]);
+                }
+                //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                if(((xpos+1)<=7)){ 
+                    console.log('front right');
+                    console.log((ypos-1)+","+(xpos+1));
+                    movea_space.push([(ypos-1),(xpos+1)]);
+                }
+            }
+        }else if(camp=='black'){
+            if((ypos+1)<=7) { //폰의 한 칸 앞이 존재하고
+                // console.log('pawn catch');
+                //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                if(((xpos-1)>=0)){ 
+                    console.log('front left');
+                    console.log((ypos+1)+","+(xpos-1));
+                    movea_space.push([(ypos+1),(xpos-1)]);
+                }
+                //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                if(((xpos+1)<=7)){ 
                     console.log('front right');
                     console.log((ypos+1)+","+(xpos+1));
                     movea_space.push([(ypos+1),(xpos+1)]);
@@ -592,15 +627,19 @@ export default class Game extends React.Component{
     //     console.log(movea_space);
     // }
 
-    calc_moveable(xpos,ypos,piece,camp,movea_space){
+    calc_moveable(xpos,ypos,piece,camp,movea_space,check){
         // let rival = (camp=='white'? 'black':'white');
 
         // console.log("camp:"+camp);
         // console.log("rival:"+rival);
         switch(piece){
             case 'pawn':
-                {
-                    this.pawn_moveable(xpos,ypos,camp,movea_space);
+                {   
+                    if(check){
+                        this.check_pawn_moveable(xpos,ypos,camp,movea_space);
+                    }else{
+                        this.pawn_moveable(xpos,ypos,camp,movea_space);
+                    }
                 }
                 break;
             case 'rook':
@@ -708,7 +747,7 @@ export default class Game extends React.Component{
                     if(current.squares[i][j].camp==this.state.next){
                         console.log(current.squares[i][j].camp==this.state.next);
                         console.log(current.squares[i][j].camp + current.squares[i][j].piece);
-                        this.calc_moveable(j,i,current.squares[i][j].piece,this.state.next,rival_king_unmovea);
+                        this.calc_moveable(j,i,current.squares[i][j].piece,this.state.next,rival_king_unmovea,true);
                     }
                 }
             }
