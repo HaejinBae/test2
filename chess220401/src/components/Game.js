@@ -393,61 +393,130 @@ export default class Game extends React.Component{
             }
         }
     }
-    rook_moveable(xpos,ypos,camp,movea_space){
+    rook_moveable(xpos,ypos,camp,movea_space,check){
         const history=this.state.history;
         const current=history[0];
         let rival = (camp=='white'? 'black':'white');
         let go = Array(4).fill(true);
+        let go_check = Array(4).fill(0);
         for(let i=1;i<8;i++){ 
             //가로이동
             //i칸 왼쪽이 존재하고 현재 진영 칸이 아니며 연속으로 그러할 때
-            if((xpos-i)>=0 && current.squares[ypos][xpos-i].camp!=camp && go[0]==true){ 
-                console.log('horizonal-');
-                console.log(current.squares[ypos][xpos-i].camp);
-                movea_space.push([ypos,(xpos-i)]);
-                //i칸 왼쪽의 진영이 상대방일 때 
-                if(current.squares[ypos][xpos-i].camp==rival){
+            if((xpos-i)>=0){ 
+                if(go[0]==true && current.squares[ypos][xpos-i].camp!=camp){
+                    console.log('horizonal-');
+                    console.log(current.squares[ypos][xpos-i].camp);
+                    movea_space.push([ypos,(xpos-i)]);
+                    //i칸 왼쪽의 진영이 상대방일 때 
+                    if(current.squares[ypos][xpos-i].camp==rival){
+                        go[0]=false;
+                    }
+                }else{
+                    console.log('checked?'+check);
+                    if(check){
+                        if(current.squares[ypos][xpos-i].camp==camp && (ypos)>=0 && (xpos-i-1)>=0){
+                            go_check[0]++;
+                            console.log('go check?'+go_check[0]);
+                            //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
+                            if(go_check[0]<2 && current.squares[ypos][xpos-i-1].piece=='king' 
+                                && current.squares[ypos][xpos-i-1].camp==rival){
+                                console.log('cant move');
+                                console.log('horizonal-');
+                                console.log(current.squares[ypos][xpos-i].camp);
+                                movea_space.push([ypos,(xpos-i)]);
+                            }
+                        }
+                    }
                     go[0]=false;
                 }
-            }else{
-                go[0]=false;
             }
             //i칸 오른쪽이 존재하고 현재 진영 칸이 아니며 연속으로 그러할 때
-            if((xpos+i)<=7 && current.squares[ypos][xpos+i].camp!=camp && go[1]==true){
-                console.log('horizonal+');
-                console.log(current.squares[ypos][xpos+i].camp);
-                movea_space.push([ypos,(xpos+i)]);
-                //i칸 오른쪽의 진영이 상대방일 때
-                if(current.squares[ypos][xpos+i].camp==rival){
+            if((xpos+i)<=7){ 
+                if(go[1]==true && current.squares[ypos][xpos+i].camp!=camp){
+                    console.log('horizonal+');
+                    console.log(current.squares[ypos][xpos+i].camp);
+                    movea_space.push([ypos,(xpos+i)]);
+                    //i칸 오른쪽의 진영이 상대방일 때 
+                    if(current.squares[ypos][xpos+i].camp==rival){
+                        go[1]=false;
+                    }
+                }else{
+                    console.log('checked?'+check);
+                    if(check){
+                        if(current.squares[ypos][xpos+i].camp==camp && (ypos)>=0 && (xpos+i+1)>=0){
+                            go_check[1]++;
+                            console.log('go check?'+go_check[1]);
+                            //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
+                            if(go_check[1]<2 && current.squares[ypos][xpos+i+1].piece=='king' 
+                                && current.squares[ypos][xpos+i+1].camp==rival){
+                                console.log('cant move');
+                                console.log('horizonal+');
+                                console.log(current.squares[ypos][xpos+i].camp);
+                                movea_space.push([ypos,(xpos+i)]);
+                            }
+                        }
+                    }
                     go[1]=false;
                 }
-            }else{
-                go[1]=false;
             }
             //세로이동
             //i칸 위쪽이 존재하고 현재 진영 칸이 아니며 연속으로 그러할 때
-            if((ypos-i)>=0 && current.squares[ypos-i][xpos].camp!=camp && go[2]==true){ 
-                console.log('vertical-');
-                console.log(current.squares[ypos-i][xpos].camp);
-                movea_space.push([(ypos-i),xpos]);
-                //i칸 위쪽의 진영이 상대방일 때
-                if(current.squares[ypos-i][xpos].camp==rival){
+            if((ypos-i)>=0){ 
+                if(go[2]==true && current.squares[ypos-i][xpos].camp!=camp){
+                    console.log('vertical-');
+                    console.log(current.squares[ypos-i][xpos].camp);
+                    movea_space.push([(ypos-i),xpos]);
+                    //i칸 위쪽의 진영이 상대방일 때
+                    if(current.squares[ypos-i][xpos].camp==rival){
+                        go[2]=false;
+                    }
+                }else{
+                    console.log('checked?'+check);
+                    if(check){
+                        if(current.squares[ypos-i][xpos].camp==camp && (ypos-i-1)>=0 && (xpos)>=0){
+                            go_check[2]++;
+                            console.log('go check?'+go_check[2]);
+                            //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
+                            if(go_check[2]<2 && current.squares[ypos-i-1][xpos].piece=='king' 
+                                && current.squares[ypos-i-1][xpos].camp==rival){
+                                console.log('cant move');
+                                console.log('vertical-');
+                                console.log(current.squares[ypos-i][xpos].camp);
+                                movea_space.push([(ypos-i),xpos]);
+                            }
+                        }
+                    }
                     go[2]=false;
                 }
-            }else{
-                go[2]=false;
             }
             //i칸 아래쪽이 존재하고 현재 진영 칸이 아니며 연속으로 그러할 때
-            if((ypos+i)<=7 && current.squares[ypos+i][xpos].camp!=camp && go[3]==true){
-                console.log('vertical+');
-                console.log(current.squares[ypos+i][xpos].camp);
-                movea_space.push([(ypos+i),xpos]);
-                //i칸 아래쪽의 진영이 상대방일 때
-                if(current.squares[ypos+i][xpos].camp==rival){
+            if((ypos+i)<=7){ 
+                if(go[3]==true && current.squares[ypos+i][xpos].camp!=camp){
+                    console.log('vertical+');
+                    console.log(current.squares[ypos+i][xpos].camp);
+                    movea_space.push([(ypos+i),xpos]);
+                    //i칸 아래쪽의 진영이 상대방일 때
+                    if(current.squares[ypos+i][xpos].camp==rival){
+                        go[3]=false;
+                    }
+                }else{
+                    console.log('checked?'+check);
+                    if(check){
+                        if(current.squares[ypos+i][xpos].camp==camp && (ypos+i+1)>=0 && (xpos)>=0){
+                            go_check[3]++;
+                            console.log('go check?'+go_check[3]);
+                            //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
+                            if(go_check[3]<2 && current.squares[ypos+i+1][xpos].piece=='king' 
+                                && current.squares[ypos+i+1][xpos].camp==rival){
+                                console.log('cant move');
+                                console.log('vertical+');
+                                console.log(current.squares[ypos+i][xpos].camp);
+                                movea_space.push([(ypos+i),xpos]);
+                            }
+                        }
+                    }
                     go[3]=false;
                 }
-            }else{
-                go[3]=false;
             }
         }
     }
@@ -638,6 +707,53 @@ export default class Game extends React.Component{
             }
         }
     }
+    check_knight_moveable(xpos,ypos,movea_space){
+        console.log(ypos+","+xpos);
+        //좌측 상하
+        if(xpos-2>=0){
+            if(ypos-1>=0){
+                console.log((ypos-1)+","+(xpos-2));
+                movea_space.push([(ypos-1),(xpos-2)]);
+            }
+            if(ypos+1<=7){
+                console.log((ypos+1)+","+(xpos-2));
+                movea_space.push([(ypos+1),(xpos-2)]);
+            }
+        }
+        //우측 상하
+        if(xpos+2<=7){
+            if(ypos-1>=0){
+                console.log((ypos-1)+","+(xpos+2));
+                movea_space.push([(ypos-1),(xpos+2)]);
+            }
+            if(ypos+1<=7){
+                console.log((ypos+1)+","+(xpos+2));
+                movea_space.push([(ypos+1),(xpos+2)]);
+            }
+        }
+        //하단 좌우
+        if(ypos+2<=7){
+            if(xpos-1>=0){
+                console.log((ypos+2)+","+(xpos-1));
+                movea_space.push([(ypos+2),(xpos-1)]);
+            }
+            if(xpos+1<=7){
+                console.log((ypos+2)+","+(xpos+1));
+                movea_space.push([(ypos+2),(xpos+1)]);
+            }
+        }
+        //상단 좌우
+        if(ypos-2>=0){
+            if(xpos-1>=0){
+                console.log((ypos-2)+","+(xpos-1));
+                movea_space.push([(ypos-2),(xpos-1)]);
+            }
+            if(xpos+1<=7){
+                console.log((ypos-2)+","+(xpos+1));
+                movea_space.push([(ypos-2),(xpos+1)]);
+            }
+        }
+    }
     king_moveable(xpos,ypos,camp,movea_space){
         const history=this.state.history;
         const current=history[0];
@@ -667,6 +783,32 @@ export default class Game extends React.Component{
             movea_space.push([(ypos+1),xpos]);
         }
         if(ypos-1>=0 && current.squares[ypos-1][xpos].camp!=camp){
+            movea_space.push([(ypos-1),xpos]);
+        }
+    }
+    check_king_moveable(xpos,ypos,movea_space){
+        if(xpos-1>=0){
+            movea_space.push([ypos,(xpos-1)]);
+            if(ypos-1>=0){
+                movea_space.push([(ypos-1),(xpos-1)]);
+            }
+            if(ypos+1<=7){
+                movea_space.push([(ypos+1),(xpos-1)]);
+            }
+        }
+        if(xpos+1<=7){
+            movea_space.push([ypos,(xpos+1)]);
+            if(ypos-1>=0){
+                movea_space.push([(ypos-1),(xpos+1)]);
+            }
+            if(ypos+1<=7){
+                movea_space.push([(ypos+1),(xpos+1)]);
+            }
+        }
+        if(ypos+1<=7){
+            movea_space.push([(ypos+1),xpos]);
+        }
+        if(ypos-1>=0){
             movea_space.push([(ypos-1),xpos]);
         }
     }
@@ -706,7 +848,7 @@ export default class Game extends React.Component{
                 break;
             case 'rook':
                 {
-                    this.rook_moveable(xpos,ypos,camp,movea_space);
+                    this.rook_moveable(xpos,ypos,camp,movea_space,check);
                 }
                 break;
             case 'bishop':
@@ -716,18 +858,26 @@ export default class Game extends React.Component{
                 break;
             case 'queen':
                 {
-                    this.rook_moveable(xpos,ypos,camp,movea_space);
-                    this.bishop_moveable(xpos,ypos,camp,movea_space);
+                    this.rook_moveable(xpos,ypos,camp,movea_space,check);
+                    this.bishop_moveable(xpos,ypos,camp,movea_space,check);
                 }
                 break;
             case 'knight':
                 {
-                    this.knight_moveable(xpos,ypos,camp,movea_space);
+                    if(check){
+                        this.check_knight_moveable(xpos,ypos,movea_space);
+                    }else{
+                        this.knight_moveable(xpos,ypos,camp,movea_space);
+                    }
                 }
                 break;
             case 'king':
                 {
-                    this.king_moveable(xpos,ypos,camp,movea_space);
+                    if(check){
+                        this.check_king_moveable(xpos,ypos,movea_space);
+                    }else{
+                        this.king_moveable(xpos,ypos,camp,movea_space);
+                    }
                 }
                 break;
         }
