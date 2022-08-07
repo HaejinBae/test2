@@ -397,63 +397,73 @@ export default class Game extends React.Component{
         const history=this.state.history;
         const current=history[0];
         let rival = (camp=='white'? 'black':'white');
+        let rival_king_pos = (camp=='white'? this.state.black_king_pos:this.state.white_king_pos);
         let go = Array(4).fill(true);
-        let go_check = Array(4).fill(0);
         for(let i=1;i<8;i++){ 
             //가로이동
             //i칸 왼쪽이 존재하고 현재 진영 칸이 아니며 연속으로 그러할 때
-            if((xpos-i)>=0){ 
-                if(go[0]==true && current.squares[ypos][xpos-i].camp!=camp){
+            if(go[0]==true && (xpos-i)>=0){ 
+                if(current.squares[ypos][xpos-i].camp!=camp){
                     console.log('horizonal-');
-                    console.log(current.squares[ypos][xpos-i].camp);
+                    console.log(current.squares[ypos][xpos-i]);
                     movea_space.push([ypos,(xpos-i)]);
-                    //i칸 왼쪽의 진영이 상대방일 때 
+                    //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos][xpos-i].camp==rival){
+                        if(check && (xpos-(i+1))>=0){
+                            if(ypos==rival_king_pos[0] && (xpos-i)==rival_king_pos[1]
+                            && current.squares[ypos][xpos-(i+1)].camp!=rival){
+                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                console.log('cant move');
+                                console.log('horizonal-');
+                                console.log('cant move?'+current.squares[ypos][xpos-(i+1)]);
+                                movea_space.push([ypos,(xpos-(i+1))]);
+                            }
+                        }
                         go[0]=false;
                     }
                 }else{
-                    console.log('checked?'+check);
-                    if(check){
-                        if(current.squares[ypos][xpos-i].camp==camp && (ypos)>=0 && (xpos-i-1)>=0){
-                            go_check[0]++;
-                            console.log('go check?'+go_check[0]);
-                            //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                            if(go_check[0]<2 && current.squares[ypos][xpos-i-1].piece=='king' 
-                                && current.squares[ypos][xpos-i-1].camp==rival){
-                                console.log('cant move');
-                                console.log('horizonal-');
-                                console.log(current.squares[ypos][xpos-i].camp);
-                                movea_space.push([ypos,(xpos-i)]);
-                            }
+                    if(check && (xpos-(i+1))>=0){
+                        console.log('now'+ypos+','+(xpos-(i+1)));
+                        console.log('king?'+rival_king_pos);
+                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
+                        if(ypos==rival_king_pos[0] && (xpos-(i+1))==rival_king_pos[1]){
+                            console.log('cant move');
+                            console.log('horizonal+');
+                            console.log(current.squares[ypos][xpos-i]);
+                            movea_space.push([ypos,(xpos-i)]);
                         }
                     }
                     go[0]=false;
                 }
             }
             //i칸 오른쪽이 존재하고 현재 진영 칸이 아니며 연속으로 그러할 때
-            if((xpos+i)<=7){ 
-                if(go[1]==true && current.squares[ypos][xpos+i].camp!=camp){
+            if(go[1]==true && (xpos+i)<=7){ 
+                if(current.squares[ypos][xpos+i].camp!=camp){
                     console.log('horizonal+');
-                    console.log(current.squares[ypos][xpos+i].camp);
+                    console.log(current.squares[ypos][xpos+i]);
                     movea_space.push([ypos,(xpos+i)]);
-                    //i칸 오른쪽의 진영이 상대방일 때 
+                    //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos][xpos+i].camp==rival){
+                        if(check && (xpos+(i+1))<=7){
+                            if(ypos==rival_king_pos[0] && (xpos+i)==rival_king_pos[1]
+                            && current.squares[ypos][xpos+(i+1)].camp!=rival){
+                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                console.log('cant move');
+                                console.log('horizonal+');
+                                console.log('cant move?'+current.squares[ypos][xpos+(i+1)]);
+                                movea_space.push([ypos,(xpos+(i+1))]);
+                            }
+                        }
                         go[1]=false;
                     }
                 }else{
-                    console.log('checked?'+check);
-                    if(check){
-                        if(current.squares[ypos][xpos+i].camp==camp && (ypos)>=0 && (xpos+i+1)>=0){
-                            go_check[1]++;
-                            console.log('go check?'+go_check[1]);
-                            //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                            if(go_check[1]<2 && current.squares[ypos][xpos+i+1].piece=='king' 
-                                && current.squares[ypos][xpos+i+1].camp==rival){
-                                console.log('cant move');
-                                console.log('horizonal+');
-                                console.log(current.squares[ypos][xpos+i].camp);
-                                movea_space.push([ypos,(xpos+i)]);
-                            }
+                    if(check && (xpos+(i+1))<=7){
+                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
+                        if(ypos==rival_king_pos[0] && (xpos+(i+1))==rival_king_pos[1]){
+                            console.log('cant move');
+                            console.log('horizonal+');
+                            console.log(current.squares[ypos][xpos+i]);
+                            movea_space.push([ypos,(xpos+i)]);
                         }
                     }
                     go[1]=false;
@@ -461,64 +471,78 @@ export default class Game extends React.Component{
             }
             //세로이동
             //i칸 위쪽이 존재하고 현재 진영 칸이 아니며 연속으로 그러할 때
-            if((ypos-i)>=0){ 
-                if(go[2]==true && current.squares[ypos-i][xpos].camp!=camp){
+            if(go[2]==true && (ypos-i)>=0){ 
+                if(current.squares[ypos-i][xpos].camp!=camp){
                     console.log('vertical-');
-                    console.log(current.squares[ypos-i][xpos].camp);
+                    console.log(current.squares[ypos-i][xpos]);
                     movea_space.push([(ypos-i),xpos]);
                     //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos-i][xpos].camp==rival){
+                        if(check && (ypos-(i+1))>=0){
+                            if((ypos-i)==rival_king_pos[0] && xpos==rival_king_pos[1]
+                            && current.squares[ypos-(i+1)][xpos].camp!=rival){
+                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                console.log('cant move');
+                                console.log('vertical-');
+                                console.log('cant move?'+current.squares[ypos-(i+1)][xpos]);
+                                movea_space.push([(ypos-(i+1)),xpos]);
+                            }
+                        }
                         go[2]=false;
                     }
                 }else{
-                    console.log('checked?'+check);
-                    if(check){
-                        if(current.squares[ypos-i][xpos].camp==camp && (ypos-i-1)>=0 && (xpos)>=0){
-                            go_check[2]++;
-                            console.log('go check?'+go_check[2]);
-                            //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                            if(go_check[2]<2 && current.squares[ypos-i-1][xpos].piece=='king' 
-                                && current.squares[ypos-i-1][xpos].camp==rival){
-                                console.log('cant move');
-                                console.log('vertical-');
-                                console.log(current.squares[ypos-i][xpos].camp);
-                                movea_space.push([(ypos-i),xpos]);
-                            }
+                    if(check && (ypos-(i+1))>=0){
+                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
+                        if((ypos-(i+1))==rival_king_pos[0] && xpos==rival_king_pos[1]){
+                            console.log('cant move');
+                            console.log('vertical-');
+                            console.log(current.squares[ypos-i][xpos]);
+                            movea_space.push([(ypos-i),xpos]);
                         }
                     }
                     go[2]=false;
                 }
             }
             //i칸 아래쪽이 존재하고 현재 진영 칸이 아니며 연속으로 그러할 때
-            if((ypos+i)<=7){ 
-                if(go[3]==true && current.squares[ypos+i][xpos].camp!=camp){
+            if(go[3]==true && (ypos+i)<=7){ 
+                if(current.squares[ypos+i][xpos].camp!=camp){
                     console.log('vertical+');
-                    console.log(current.squares[ypos+i][xpos].camp);
+                    console.log(current.squares[ypos+i][xpos]);
                     movea_space.push([(ypos+i),xpos]);
-                    //i칸 아래쪽의 진영이 상대방일 때
+                    //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos+i][xpos].camp==rival){
+                        if(check && (ypos+(i+1))<=7){
+                            if((ypos+i)==rival_king_pos[0] && xpos==rival_king_pos[1]
+                            && current.squares[ypos+(i+1)][xpos].camp!=rival){
+                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                console.log('cant move');
+                                console.log('vertical+');
+                                console.log('cant move?'+current.squares[ypos+(i+1)][xpos]);
+                                movea_space.push([(ypos+(i+1)),xpos]);
+                            }
+                        }
                         go[3]=false;
                     }
                 }else{
-                    console.log('checked?'+check);
-                    if(check){
-                        if(current.squares[ypos+i][xpos].camp==camp && (ypos+i+1)>=0 && (xpos)>=0){
-                            go_check[3]++;
-                            console.log('go check?'+go_check[3]);
-                            //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                            if(go_check[3]<2 && current.squares[ypos+i+1][xpos].piece=='king' 
-                                && current.squares[ypos+i+1][xpos].camp==rival){
-                                console.log('cant move');
-                                console.log('vertical+');
-                                console.log(current.squares[ypos+i][xpos].camp);
-                                movea_space.push([(ypos+i),xpos]);
-                            }
+                    if(check && (ypos+(i+1))<=7){
+                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
+                        if((ypos+(i+1))==rival_king_pos[0] && xpos==rival_king_pos[1]){
+                            console.log('cant move');
+                            console.log('vertical+');
+                            console.log(current.squares[ypos+i][xpos]);
+                            movea_space.push([(ypos+i),xpos]);
                         }
                     }
                     go[3]=false;
                 }
             }
         }
+
+        // if(check && camp=='white'){
+        //     for(let i=0;i<movea_space.length;i++){
+        //         document.getElementsByClassName("board-row")[movea_space[i][0]].children[movea_space[i][1]].classList.add('unmoveable');
+        //     }
+        // }
     }
     bishop_moveable(xpos,ypos,camp,movea_space,check){
         const history=this.state.history;
@@ -891,7 +915,9 @@ export default class Game extends React.Component{
         let chk_check = [];
         let rival_king_pos = (camp=='white'? this.state.black_king_pos:this.state.white_king_pos);
         console.log(rival_king_pos);
-        this.calc_moveable(xpos,ypos,piece,camp,chk_check,true);
+        console.log('////////////////check start///////////////');
+        console.log(piece);
+        this.calc_moveable(xpos,ypos,piece,camp,chk_check,(piece=='pawn'?true:false));
         for(let i=0;i<chk_check.length;i++){
             console.log(chk_check[i]);
             if(chk_check[i][0]==rival_king_pos[0] && chk_check[i][1]==rival_king_pos[1]){
