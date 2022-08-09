@@ -99,6 +99,7 @@ export default class Game extends React.Component{
             white_king_pos: [7,4],
             check_path: null,
             promotion: null,
+            queen: null,
             game: 'continue',
             white_pieces: {
                 king: 1,
@@ -400,13 +401,13 @@ export default class Game extends React.Component{
         if(camp=='white'){
             if((ypos-1)>=0) { //폰의 한 칸 앞이 존재하고
                 // console.log('pawn catch');
-                //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                //왼쪽 칸이 존재하면
                 if(((xpos-1)>=0)){ 
                     console.log('front left');
                     console.log((ypos-1)+","+(xpos-1));
                     movea_space.push([(ypos-1),(xpos-1)]);
                 }
-                //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                //오른쪽 칸이 존재하면
                 if(((xpos+1)<=7)){ 
                     console.log('front right');
                     console.log((ypos-1)+","+(xpos+1));
@@ -416,13 +417,13 @@ export default class Game extends React.Component{
         }else if(camp=='black'){
             if((ypos+1)<=7) { //폰의 한 칸 앞이 존재하고
                 // console.log('pawn catch');
-                //왼쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                //왼쪽 칸이 존재하면
                 if(((xpos-1)>=0)){ 
                     console.log('front left');
                     console.log((ypos+1)+","+(xpos-1));
                     movea_space.push([(ypos+1),(xpos-1)]);
                 }
-                //오른쪽 칸이 존재하며 대각선 앞에 상대 진영의 말이 있다면
+                //오른쪽 칸이 존재하면
                 if(((xpos+1)<=7)){ 
                     console.log('front right');
                     console.log((ypos+1)+","+(xpos+1));
@@ -447,14 +448,18 @@ export default class Game extends React.Component{
                     movea_space.push([ypos,(xpos-i)]);
                     //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos][xpos-i].camp==rival){
-                        if(check && (xpos-(i+1))>=0){
-                            if(ypos==rival_king_pos[0] && (xpos-i)==rival_king_pos[1]
-                            && current.squares[ypos][xpos-(i+1)].camp!=rival){
-                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
-                                console.log('cant move');
-                                console.log('horizonal-');
-                                console.log('cant move?'+current.squares[ypos][xpos-(i+1)]);
-                                movea_space.push([ypos,(xpos-(i+1))]);
+                        if(ypos==rival_king_pos[0] && (xpos-i)==rival_king_pos[1]){
+                            if(check==false){
+                                this.state.queen = 'check';
+                                console.log('***********queen '+this.state.queen+'************');
+                            }else if(check && (xpos-(i+1))>=0){
+                                if(current.squares[ypos][xpos-(i+1)].camp!=rival){
+                                    //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                    console.log('cant move');
+                                    console.log('horizonal-');
+                                    console.log('cant move?'+current.squares[ypos][xpos-(i+1)]);
+                                    movea_space.push([ypos,(xpos-(i+1))]);
+                                }
                             }
                         }
                         go[0]=false;
@@ -482,14 +487,18 @@ export default class Game extends React.Component{
                     movea_space.push([ypos,(xpos+i)]);
                     //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos][xpos+i].camp==rival){
-                        if(check && (xpos+(i+1))<=7){
-                            if(ypos==rival_king_pos[0] && (xpos+i)==rival_king_pos[1]
-                            && current.squares[ypos][xpos+(i+1)].camp!=rival){
-                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
-                                console.log('cant move');
-                                console.log('horizonal+');
-                                console.log('cant move?'+current.squares[ypos][xpos+(i+1)]);
-                                movea_space.push([ypos,(xpos+(i+1))]);
+                        if(ypos==rival_king_pos[0] && (xpos+i)==rival_king_pos[1]){
+                            if(check==false){
+                                this.state.queen = 'check';
+                                console.log('***********queen '+this.state.queen+'************');
+                            }else if(check && (xpos+(i+1))<=7){
+                                if(current.squares[ypos][xpos+(i+1)].camp!=rival){
+                                    //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                    console.log('cant move');
+                                    console.log('horizonal+');
+                                    console.log('cant move?'+current.squares[ypos][xpos+(i+1)]);
+                                    movea_space.push([ypos,(xpos+(i+1))]);
+                                }
                             }
                         }
                         go[1]=false;
@@ -517,13 +526,17 @@ export default class Game extends React.Component{
                     //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos-i][xpos].camp==rival){
                         if(check && (ypos-(i+1))>=0){
-                            if((ypos-i)==rival_king_pos[0] && xpos==rival_king_pos[1]
-                            && current.squares[ypos-(i+1)][xpos].camp!=rival){
-                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
-                                console.log('cant move');
-                                console.log('vertical-');
-                                console.log('cant move?'+current.squares[ypos-(i+1)][xpos]);
-                                movea_space.push([(ypos-(i+1)),xpos]);
+                            if((ypos-i)==rival_king_pos[0] && xpos==rival_king_pos[1]){
+                                if(check==false){
+                                    this.state.queen = 'check';
+                                    console.log('***********queen '+this.state.queen+'************');
+                                }else if(current.squares[ypos-(i+1)][xpos].camp!=rival){
+                                    //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                    console.log('cant move');
+                                    console.log('vertical-');
+                                    console.log('cant move?'+current.squares[ypos-(i+1)][xpos]);
+                                    movea_space.push([(ypos-(i+1)),xpos]);
+                                }
                             }
                         }
                         go[2]=false;
@@ -549,14 +562,18 @@ export default class Game extends React.Component{
                     movea_space.push([(ypos+i),xpos]);
                     //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos+i][xpos].camp==rival){
-                        if(check && (ypos+(i+1))<=7){
-                            if((ypos+i)==rival_king_pos[0] && xpos==rival_king_pos[1]
-                            && current.squares[ypos+(i+1)][xpos].camp!=rival){
-                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
-                                console.log('cant move');
-                                console.log('vertical+');
-                                console.log('cant move?'+current.squares[ypos+(i+1)][xpos]);
-                                movea_space.push([(ypos+(i+1)),xpos]);
+                        if((ypos+i)==rival_king_pos[0] && xpos==rival_king_pos[1]){
+                            if(check==false){
+                                this.state.queen = 'check';
+                                console.log('***********queen '+this.state.queen+'************');
+                            }else if(check && (ypos+(i+1))<=7){
+                                if(current.squares[ypos+(i+1)][xpos].camp!=rival){
+                                    //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                    console.log('cant move');
+                                    console.log('vertical+');
+                                    console.log('cant move?'+current.squares[ypos+(i+1)][xpos]);
+                                    movea_space.push([(ypos+(i+1)),xpos]);
+                                }
                             }
                         }
                         go[3]=false;
@@ -599,14 +616,18 @@ export default class Game extends React.Component{
                     movea_space.push([(ypos-i),(xpos-i)]);
                     //해당 칸의 진영이 상대 진영일 때
                     if(current.squares[ypos-i][xpos-i].camp==rival){
-                        if(check && (ypos-(i+1))>=0 && (xpos-(i+1))>=0){
-                            if((ypos-i)==rival_king_pos[0] && (xpos-i)==rival_king_pos[1]
-                            && current.squares[ypos-(i+1)][xpos-(i+1)].camp!=rival){
-                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
-                                console.log('cant move');
-                                console.log('left-');
-                                console.log('cant move?'+current.squares[ypos-(i+1)][xpos-(i+1)]);
-                                movea_space.push([(ypos-(i+1)),(xpos-(i+1))]);
+                        if((ypos-i)==rival_king_pos[0] && (xpos-i)==rival_king_pos[1]){
+                            if(check==false){
+                                this.state.queen = 'check';
+                                console.log('***********queen '+this.state.queen+'************');
+                            }else if(check && (ypos-(i+1))>=0 && (xpos-(i+1))>=0){
+                                if(current.squares[ypos-(i+1)][xpos-(i+1)].camp!=rival){
+                                    //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                    console.log('cant move');
+                                    console.log('left-');
+                                    console.log('cant move?'+current.squares[ypos-(i+1)][xpos-(i+1)]);
+                                    movea_space.push([(ypos-(i+1)),(xpos-(i+1))]);
+                                }
                             }
                         }
                         go[0]=false;
@@ -634,14 +655,18 @@ export default class Game extends React.Component{
                     movea_space.push([(ypos+i),(xpos+i)]);
                     //해당 칸의 진영이 상대 진영일 때
                     if(current.squares[ypos+i][xpos+i].camp==rival){
-                        if(check && (ypos+(i+1))<=7 && (xpos+(i+1))<=7){
-                            if((ypos+i)==rival_king_pos[0] && (xpos+i)==rival_king_pos[1]
-                            && current.squares[ypos+(i+1)][xpos+(i+1)].camp!=rival){
-                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
-                                console.log('cant move');
-                                console.log('right+');
-                                console.log('cant move?'+current.squares[ypos+(i+1)][xpos+(i+1)]);
-                                movea_space.push([(ypos+(i+1)),(xpos+(i+1))]);
+                        if((ypos+i)==rival_king_pos[0] && (xpos+i)==rival_king_pos[1]){
+                            if(check==false){
+                                this.state.queen = 'check';
+                                console.log('***********queen '+this.state.queen+'************');
+                            }else if(check && (ypos+(i+1))<=7 && (xpos+(i+1))<=7){
+                                if(current.squares[ypos+(i+1)][xpos+(i+1)].camp!=rival){
+                                    //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                    console.log('cant move');
+                                    console.log('right+');
+                                    console.log('cant move?'+current.squares[ypos+(i+1)][xpos+(i+1)]);
+                                    movea_space.push([(ypos+(i+1)),(xpos+(i+1))]);
+                                }
                             }
                         }
                         go[1]=false;
@@ -669,14 +694,18 @@ export default class Game extends React.Component{
                     movea_space.push([(ypos-i),(xpos+i)]);
                     //해당 칸의 진영이 상대 진영일 때
                     if(current.squares[ypos-i][xpos+i].camp==rival){
-                        if(check && (ypos-(i+1))>=0 && (xpos+(i+1))<=7){
-                            if((ypos-i)==rival_king_pos[0] && (xpos+i)==rival_king_pos[1]
-                            && current.squares[ypos-(i+1)][xpos+(i+1)].camp!=rival){
-                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
-                                console.log('cant move');
-                                console.log('right-');
-                                console.log('cant move?'+current.squares[ypos-(i+1)][xpos+(i+1)]);
-                                movea_space.push([(ypos-(i+1)),(xpos+(i+1))]);
+                        if((ypos-i)==rival_king_pos[0] && (xpos+i)==rival_king_pos[1]){
+                            if(check==false){
+                                this.state.queen = 'check';
+                                console.log('***********queen '+this.state.queen+'************');
+                            }else if(check && (ypos-(i+1))>=0 && (xpos+(i+1))<=7){
+                                if(current.squares[ypos-(i+1)][xpos+(i+1)].camp!=rival){
+                                    //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                    console.log('cant move');
+                                    console.log('right-');
+                                    console.log('cant move?'+current.squares[ypos-(i+1)][xpos+(i+1)]);
+                                    movea_space.push([(ypos-(i+1)),(xpos+(i+1))]);
+                                }
                             }
                         }
                         go[2]=false;
@@ -704,14 +733,18 @@ export default class Game extends React.Component{
                     movea_space.push([(ypos+i),(xpos-i)]);
                     //해당 칸의 진영이 상대 진영일 때
                     if(current.squares[ypos+i][xpos-i].camp==rival){
-                        if(check && (ypos+(i+1))<=7 && (xpos-(i+1))>=0){
-                            if((ypos+i)==rival_king_pos[0] && (xpos-i)==rival_king_pos[1]
-                            && current.squares[ypos+(i+1)][xpos-(i+1)].camp!=rival){
-                                //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
-                                console.log('cant move');
-                                console.log('left+');
-                                console.log('cant move?'+current.squares[ypos+(i+1)][xpos-(i+1)]);
-                                movea_space.push([(ypos+(i+1)),(xpos-(i+1))]);
+                        if((ypos+i)==rival_king_pos[0] && (xpos-i)==rival_king_pos[1]){
+                            if(check==false){
+                                this.state.queen = 'check';
+                                console.log('***********queen '+this.state.queen+'************');
+                            }else if(check && (ypos+(i+1))<=7 && (xpos-(i+1))>=0){
+                                if(current.squares[ypos+(i+1)][xpos-(i+1)].camp!=rival){
+                                    //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
+                                    console.log('cant move');
+                                    console.log('left+');
+                                    console.log('cant move?'+current.squares[ypos+(i+1)][xpos-(i+1)]);
+                                    movea_space.push([(ypos+(i+1)),(xpos-(i+1))]);
+                                }
                             }
                         }
                         go[3]=false;
@@ -922,17 +955,43 @@ export default class Game extends React.Component{
             case 'rook':
                 {
                     this.rook_moveable(xpos,ypos,camp,movea_space,check);
+                    this.state.queen = null;
                 }
                 break;
             case 'bishop':
                 {
                     this.bishop_moveable(xpos,ypos,camp,movea_space,check);
+                    this.state.queen = null;
                 }
                 break;
             case 'queen':
                 {
-                    this.rook_moveable(xpos,ypos,camp,movea_space,check);
-                    this.bishop_moveable(xpos,ypos,camp,movea_space,check);
+                    let rook_movea = [];
+                    let bishop_movea = [];
+                    this.rook_moveable(xpos,ypos,camp,rook_movea,check);
+                    console.log(check);
+                    if(check==false){
+                        console.log('checking');
+                        if(this.state.queen!='check') {
+                            rook_movea = [];
+                            this.bishop_moveable(xpos,ypos,camp,bishop_movea,check);
+                            if(this.state.queen!='check') {
+                                bishop_movea = [];
+                            }
+                        }
+                        this.state.queen = null;
+                    }else if(check==true||check==undefined){
+                        console.log('moveable');
+                        this.bishop_moveable(xpos,ypos,camp,bishop_movea,check);
+                    }
+                    console.log('rook'+rook_movea);
+                    console.log('bishop'+bishop_movea);
+                    for(let i=0;i<rook_movea.length;i++){
+                        movea_space.push(rook_movea[i]);
+                    }
+                    for(let i=0;i<bishop_movea.length;i++){
+                        movea_space.push(bishop_movea[i]);
+                    }
                 }
                 break;
             case 'knight':
@@ -1015,6 +1074,7 @@ export default class Game extends React.Component{
         // this.checkmate(rival_king_pos);
         if(this.state.check_path!=null){
             console.log('##########check##########');
+            // this.state.game = 'check';
         }
     }
 
@@ -1079,6 +1139,7 @@ export default class Game extends React.Component{
                     }
                 }else{
                     console.log('=======continue========');
+                    this.state.game = 'continue';
                 }
             }else if(flag){
                 console.log('!!!!!!!!!!!!!!!!!checkmate!!!!!!!!!!!!!!!!!');
@@ -1088,6 +1149,12 @@ export default class Game extends React.Component{
                 }
             }
         }else{
+            if(this.state.check_path!=null){
+                console.log('##########check##########');
+                this.state.game = 'check';
+            }else{
+                this.state.game = 'continue';
+            }
             console.log('=======continue========');
         }
     }
