@@ -310,7 +310,9 @@ export default class Game extends React.Component{
                 if(this.state.promotion==null){
                     //승부 판정
                     this.draw();
-                    this.checkmate();
+                    if(this.state.game!='draw'){
+                        this.checkmate();
+                    }
                     //이동 후 선택된 말 정보 초기화, 플레이어 순서 변경
                     this.setState({
                         // history: history,
@@ -1172,10 +1174,16 @@ export default class Game extends React.Component{
                     //draw
                     console.log('&&&&&&&&&&&draw&&&&&&&&&&');
                     this.state.game = 'draw';
+                    for(let i=0;i<64;i++){
+                        document.getElementsByClassName("square")[i].disabled = true;
+                    }
                 }else if(next_pieces.bishop==0 && next_pieces.knight==0){
                     //draw
                     console.log('&&&&&&&&&&&draw&&&&&&&&&&');
                     this.state.game = 'draw';
+                    for(let i=0;i<64;i++){
+                        document.getElementsByClassName("square")[i].disabled = true;
+                    }
                 }
             }
         }
