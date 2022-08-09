@@ -450,6 +450,8 @@ export default class Game extends React.Component{
                     movea_space.push([ypos,(xpos-i)]);
                     //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos][xpos-i].camp==rival){
+                        // console.log(ypos+','+(xpos-i));
+                        // console.log(rival_king_pos[0]+','+rival_king_pos[1]);
                         if(ypos==rival_king_pos[0] && (xpos-i)==rival_king_pos[1]){
                             if(check==false){
                                 this.state.queen = 'check';
@@ -527,12 +529,12 @@ export default class Game extends React.Component{
                     movea_space.push([(ypos-i),xpos]);
                     //i칸 위쪽의 진영이 상대방일 때
                     if(current.squares[ypos-i][xpos].camp==rival){
-                        if(check && (ypos-(i+1))>=0){
-                            if((ypos-i)==rival_king_pos[0] && xpos==rival_king_pos[1]){
-                                if(check==false){
-                                    this.state.queen = 'check';
-                                    console.log('***********queen '+this.state.queen+'************');
-                                }else if(current.squares[ypos-(i+1)][xpos].camp!=rival){
+                        if((ypos-i)==rival_king_pos[0] && xpos==rival_king_pos[1]){
+                            if(check==false){
+                                this.state.queen = 'check';
+                                console.log('***********queen '+this.state.queen+'************');
+                            }else if(check && (ypos-(i+1))>=0){
+                                if(current.squares[ypos-(i+1)][xpos].camp!=rival){
                                     //킹과 현재 말 사이가 비어있고 킹이 이동 가능한 칸이 현재 말의 이동경로와 겹치면 킹 이동 불가
                                     console.log('cant move');
                                     console.log('vertical-');
@@ -981,7 +983,6 @@ export default class Game extends React.Component{
                                 bishop_movea = [];
                             }
                         }
-                        this.state.queen = null;
                     }else if(check==true||check==undefined){
                         console.log('moveable');
                         this.bishop_moveable(xpos,ypos,camp,bishop_movea,check);
@@ -994,6 +995,7 @@ export default class Game extends React.Component{
                     for(let i=0;i<bishop_movea.length;i++){
                         movea_space.push(bishop_movea[i]);
                     }
+                    this.state.queen = null;
                 }
                 break;
             case 'knight':
@@ -1075,7 +1077,7 @@ export default class Game extends React.Component{
         console.log('checked?'+this.state.check_path);
         // this.checkmate(rival_king_pos);
         if(this.state.check_path!=null){
-            console.log('##########check##########');
+            // console.log('##########check##########');
             // this.state.game = 'check';
         }
     }
@@ -1143,12 +1145,16 @@ export default class Game extends React.Component{
                     console.log('=======continue========');
                     this.state.game = 'continue';
                 }
-            }else if(flag){
+            }else if(flag && this.state.check_path!=null){
                 console.log('!!!!!!!!!!!!!!!!!checkmate!!!!!!!!!!!!!!!!!');
                 this.state.game = 'checkmate';
                 for(let i=0;i<64;i++){
                     document.getElementsByClassName("square")[i].disabled = true;
                 }
+            }else{
+                console.log('##########check##########');
+                this.state.game = 'check';
+                console.log('=======continue========');
             }
         }else{
             if(this.state.check_path!=null){
