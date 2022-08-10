@@ -8,9 +8,13 @@
 }
 #board{
     width: 480px;
+    float: left;
 }
 #selected, #pieces{
     clear: both;
+}
+#game-info{
+    display: inline-block;
 }
 #pieces.hidden{
     display: none;
