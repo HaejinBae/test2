@@ -284,8 +284,6 @@ export default class Game extends React.Component{
                                 }
                                 document.getElementsByClassName("container")[0].classList.add("white");
                                 document.getElementsByClassName("container")[0].classList.remove("black");
-                            }else{
-                                this.check(po[1],po[0],scmp,spc);
                             }
                         }else if(scmp=='black'){
                             if(po[0]==7){
@@ -296,21 +294,23 @@ export default class Game extends React.Component{
                                 }
                                 document.getElementsByClassName("container")[0].classList.add("black");
                                 document.getElementsByClassName("container")[0].classList.remove("white");
-                            }else{
-                                this.check(po[1],po[0],scmp,spc);
                             }
                         }
-                    }else{
-                        //체크 판단
-                        this.check(po[1],po[0],scmp,spc);
                     }
                 }
                 
                 
                 if(this.state.promotion==null){
-                    //승부 판정
                     this.draw();
+                    //승부 판정
                     if(this.state.game!='draw'){
+                        if(spc!='king'){
+                            //체크 판단
+                            this.check(po[1],po[0],scmp,spc);
+                        }
+                        if(this.state.check_path==null){
+                            this.calc_all_moveable(this.state.next,[],true);
+                        }
                         this.checkmate();
                     }
                     //이동 후 선택된 말 정보 초기화, 플레이어 순서 변경
@@ -439,6 +439,8 @@ export default class Game extends React.Component{
         const current=history[0];
         let rival = (camp=='white'? 'black':'white');
         let rival_king_pos = (camp=='white'? this.state.black_king_pos:this.state.white_king_pos);
+        let rival_king_movea = [];
+        this.king_moveable(rival_king_pos[1],rival_king_pos[0],rival,rival_king_movea);
         let go = Array(4).fill(true);
         for(let i=1;i<8;i++){ 
             //가로이동
@@ -469,15 +471,18 @@ export default class Game extends React.Component{
                         go[0]=false;
                     }
                 }else{
-                    if(check && (xpos-(i+1))>=0){
+                    if(check){
                         console.log('now'+ypos+','+(xpos-(i+1)));
                         console.log('king?'+rival_king_pos);
-                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                        if(ypos==rival_king_pos[0] && (xpos-(i+1))==rival_king_pos[1]){
-                            console.log('cant move');
-                            console.log('horizonal+');
-                            console.log(current.squares[ypos][xpos-i]);
-                            movea_space.push([ypos,(xpos-i)]);
+                        //현재 말 이동경로에 아군 말이 하나 있고 킹의 이동경로와 겹치는 경우 킹 이동 불가
+                        for(let k=0;k<rival_king_movea.length;k++){
+                            if(rival_king_movea[k][0]==ypos && rival_king_movea[k][1]==(xpos-i)){
+                                console.log('cant move');
+                                console.log('horizonal-');
+                                console.log(current.squares[ypos][xpos-i]);
+                                movea_space.push([ypos,(xpos-i)]);
+                                break;
+                            }
                         }
                     }
                     go[0]=false;
@@ -508,13 +513,16 @@ export default class Game extends React.Component{
                         go[1]=false;
                     }
                 }else{
-                    if(check && (xpos+(i+1))<=7){
-                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                        if(ypos==rival_king_pos[0] && (xpos+(i+1))==rival_king_pos[1]){
-                            console.log('cant move');
-                            console.log('horizonal+');
-                            console.log(current.squares[ypos][xpos+i]);
-                            movea_space.push([ypos,(xpos+i)]);
+                    if(check){
+                        //현재 말 이동경로에 아군 말이 하나 있고 킹의 이동경로와 겹치는 경우 킹 이동 불가
+                        for(let k=0;k<rival_king_movea.length;k++){
+                            if(rival_king_movea[k][0]==ypos && rival_king_movea[k][1]==(xpos+i)){
+                                console.log('cant move');
+                                console.log('horizonal+');
+                                console.log(current.squares[ypos][xpos+i]);
+                                movea_space.push([ypos,(xpos+i)]);
+                                break;
+                            }
                         }
                     }
                     go[1]=false;
@@ -546,13 +554,16 @@ export default class Game extends React.Component{
                         go[2]=false;
                     }
                 }else{
-                    if(check && (ypos-(i+1))>=0){
-                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                        if((ypos-(i+1))==rival_king_pos[0] && xpos==rival_king_pos[1]){
-                            console.log('cant move');
-                            console.log('vertical-');
-                            console.log(current.squares[ypos-i][xpos]);
-                            movea_space.push([(ypos-i),xpos]);
+                    if(check){
+                        //현재 말 이동경로에 아군 말이 하나 있고 킹의 이동경로와 겹치는 경우 킹 이동 불가
+                        for(let k=0;k<rival_king_movea.length;k++){
+                            if(rival_king_movea[k][0]==(ypos-i) && rival_king_movea[k][1]==xpos){
+                                console.log('cant move');
+                                console.log('vertical-');
+                                console.log(current.squares[ypos-i][xpos]);
+                                movea_space.push([(ypos-i),xpos]);
+                                break;
+                            }
                         }
                     }
                     go[2]=false;
@@ -583,13 +594,16 @@ export default class Game extends React.Component{
                         go[3]=false;
                     }
                 }else{
-                    if(check && (ypos+(i+1))<=7){
-                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                        if((ypos+(i+1))==rival_king_pos[0] && xpos==rival_king_pos[1]){
-                            console.log('cant move');
-                            console.log('vertical+');
-                            console.log(current.squares[ypos+i][xpos]);
-                            movea_space.push([(ypos+i),xpos]);
+                    if(check){
+                        //현재 말 이동경로에 아군 말이 하나 있고 킹의 이동경로와 겹치는 경우 킹 이동 불가
+                        for(let k=0;k<rival_king_movea.length;k++){
+                            if(rival_king_movea[k][0]==(ypos+i) && rival_king_movea[k][1]==xpos){
+                                console.log('cant move');
+                                console.log('vertical+');
+                                console.log(current.squares[ypos+i][xpos]);
+                                movea_space.push([(ypos+i),xpos]);
+                                break;
+                            }
                         }
                     }
                     go[3]=false;
@@ -608,6 +622,8 @@ export default class Game extends React.Component{
         const current=history[0];
         let rival = (camp=='white'? 'black':'white');
         let rival_king_pos = (camp=='white'? this.state.black_king_pos:this.state.white_king_pos);
+        let rival_king_movea = [];
+        this.king_moveable(rival_king_pos[1],rival_king_pos[0],rival,rival_king_movea);
         //연속으로 이동 가능한 칸인지 검사할 배열
         let go = Array(4).fill(true);
         for(let i=1;i<8;i++){
@@ -637,13 +653,16 @@ export default class Game extends React.Component{
                         go[0]=false;
                     }
                 }else{
-                    if(check && (ypos-(i+1))>=0 && (xpos-(i+1))>=0){
-                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                        if((ypos-(i+1))==rival_king_pos[0] && (xpos-(i+1))==rival_king_pos[1]){
-                            console.log('cant move');
-                            console.log('left-');
-                            console.log(current.squares[ypos-i][xpos-i].camp);
-                            movea_space.push([(ypos-i),(xpos-i)]);
+                    if(check){
+                        //현재 말 이동경로에 아군 말이 하나 있고 킹의 이동경로와 겹치는 경우 킹 이동 불가
+                        for(let k=0;k<rival_king_movea.length;k++){
+                            if(rival_king_movea[k][0]==(ypos-i) && rival_king_movea[k][1]==(xpos-i)){
+                                console.log('cant move');
+                                console.log('left-');
+                                console.log(current.squares[ypos-i][xpos-i].camp);
+                                movea_space.push([(ypos-i),(xpos-i)]);
+                                break;
+                            }
                         }
                     }
                     go[0]=false;
@@ -676,13 +695,16 @@ export default class Game extends React.Component{
                         go[1]=false;
                     }
                 }else{
-                    if(check && (ypos+(i+1))<=7 && (xpos+(i+1))<=7){
-                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                        if((ypos+(i+1))==rival_king_pos[0] && (xpos+(i+1))==rival_king_pos[1]){
-                            console.log('cant move');
-                            console.log('right+');
-                            console.log(current.squares[ypos+i][xpos+i].camp);
-                            movea_space.push([(ypos+i),(xpos+i)]);
+                    if(check){
+                        //현재 말 이동경로에 아군 말이 하나 있고 킹의 이동경로와 겹치는 경우 킹 이동 불가
+                        for(let k=0;k<rival_king_movea.length;k++){
+                            if(rival_king_movea[k][0]==(ypos+i) && rival_king_movea[k][1]==(xpos+i)){
+                                console.log('cant move');
+                                console.log('right+');
+                                console.log(current.squares[ypos+i][xpos+i].camp);
+                                movea_space.push([(ypos+i),(xpos+i)]);
+                                break;
+                            }
                         }
                     }
                     go[1]=false;
@@ -715,13 +737,16 @@ export default class Game extends React.Component{
                         go[2]=false;
                     }
                 }else{
-                    if(check && (ypos-(i+1))>=0 && (xpos+(i+1))<=7){
-                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                        if((ypos-(i+1))==rival_king_pos[0] && (xpos+(i+1))==rival_king_pos[1]){
-                            console.log('cant move');
-                            console.log('right-');
-                            console.log(current.squares[ypos-i][xpos+i].camp);
-                            movea_space.push([(ypos-i),(xpos+i)]);
+                    if(check){
+                        //현재 말 이동경로에 아군 말이 하나 있고 킹의 이동경로와 겹치는 경우 킹 이동 불가
+                        for(let k=0;k<rival_king_movea.length;k++){
+                            if(rival_king_movea[k][0]==(ypos-i) && rival_king_movea[k][1]==(xpos+i)){
+                                console.log('cant move');
+                                console.log('right-');
+                                console.log(current.squares[ypos-i][xpos+i].camp);
+                                movea_space.push([(ypos-i),(xpos+i)]);
+                                break;
+                            }
                         }
                     }
                     go[2]=false;
@@ -754,13 +779,16 @@ export default class Game extends React.Component{
                         go[3]=false;
                     }
                 }else{
-                    if(check && (ypos+(i+1))<=7 && (xpos-(i+1))>=0){
-                        //킹의 이동경로와 현재 말 이동경로 겹치는 곳에 아군 말 하나만 있을 경우 킹 이동 불가
-                        if((ypos+(i+1))==rival_king_pos[0] && (xpos-(i+1))==rival_king_pos[1]){
-                            console.log('cant move');
-                            console.log('left+');
-                            console.log(current.squares[ypos+i][xpos-i].camp);
-                            movea_space.push([(ypos+i),(xpos-i)]);
+                    if(check){
+                        //현재 말 이동경로에 아군 말이 하나 있고 킹의 이동경로와 겹치는 경우 킹 이동 불가
+                        for(let k=0;k<rival_king_movea.length;k++){
+                            if(rival_king_movea[k][0]==(ypos+i) && rival_king_movea[k][1]==(xpos-i)){
+                                console.log('cant move');
+                                console.log('left+');
+                                console.log(current.squares[ypos+i][xpos-i].camp);
+                                movea_space.push([(ypos+i),(xpos-i)]);
+                                break;
+                            }
                         }
                     }
                     go[3]=false;
@@ -922,19 +950,30 @@ export default class Game extends React.Component{
             movea_space.push([(ypos-1),xpos]);
         }
     }
-    calc_all_moveable(camp,movea_space){
+    calc_all_moveable(camp,movea_space,check){
         const history=this.state.history;
         const current=history[0];
+        let check_flag = false;
         console.log(camp);
-        //let next_rival = (camp=='white'? 'black':'white');
-        //console.log("next_rival:"+next_rival);
         for(let i=0;i<8;i++){
             for(let j=0;j<8;j++){
                 if(current.squares[i][j].camp==camp){
                     console.log(current.squares[i][j].camp==camp);
                     console.log(current.squares[i][j].camp + current.squares[i][j].piece);
-                    this.calc_moveable(j,i,current.squares[i][j].piece,camp,movea_space,true);
+                    if(check){
+                        //체크 판단
+                        this.check(j,i,camp,current.squares[i][j].piece);
+                        if(this.state.check_path!=null){
+                            check_flag = true;
+                            break;
+                        }
+                    }else{
+                        this.calc_moveable(j,i,current.squares[i][j].piece,camp,movea_space,true);
+                    }
                 }
+            }
+            if(check_flag){
+                break;
             }
         }
         //movea_space = new Set(movea_space);
@@ -1036,37 +1075,39 @@ export default class Game extends React.Component{
                 // console.log('**********check**********');
                 //체크중인 말을 막기 위한 경로를 저장하기 위한 배열
                 let check_movea = chk_check;
-                check_movea = check_movea.filter(v=>{
-                    if(ypos<=rival_king_pos[0]){
-                        if(xpos<=rival_king_pos[1]){
-                            return (
-                                (v[0]<=rival_king_pos[0] && ypos<=v[0]) 
-                                && (v[1]<=rival_king_pos[1] && xpos<=v[1]) 
-                                && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
-                            );
+                if(piece!='knight'){
+                    check_movea = check_movea.filter(v=>{
+                        if(ypos<=rival_king_pos[0]){
+                            if(xpos<=rival_king_pos[1]){
+                                return (
+                                    (v[0]<=rival_king_pos[0] && ypos<=v[0]) 
+                                    && (v[1]<=rival_king_pos[1] && xpos<=v[1]) 
+                                    && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
+                                );
+                            }else{
+                                return (
+                                    (v[0]<=rival_king_pos[0] && ypos<=v[0]) 
+                                    && (v[1]>=rival_king_pos[1] && xpos>=v[1])
+                                    && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
+                                );
+                            }
                         }else{
-                            return (
-                                (v[0]<=rival_king_pos[0] && ypos<=v[0]) 
-                                && (v[1]>=rival_king_pos[1] && xpos>=v[1])
-                                && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
-                            );
+                            if(xpos<=rival_king_pos[1]){
+                                return (
+                                    (v[0]>=rival_king_pos[0] && ypos>=v[0]) 
+                                    && (v[1]<=rival_king_pos[1] && xpos<=v[1])
+                                    && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
+                                );
+                            }else{
+                                return (
+                                    (v[0]>=rival_king_pos[0] && ypos>=v[0]) 
+                                    && (v[1]>=rival_king_pos[1] && xpos>=v[1])
+                                    && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
+                                );
+                            }
                         }
-                    }else{
-                        if(xpos<=rival_king_pos[1]){
-                            return (
-                                (v[0]>=rival_king_pos[0] && ypos>=v[0]) 
-                                && (v[1]<=rival_king_pos[1] && xpos<=v[1])
-                                && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
-                            );
-                        }else{
-                            return (
-                                (v[0]>=rival_king_pos[0] && ypos>=v[0]) 
-                                && (v[1]>=rival_king_pos[1] && xpos>=v[1])
-                                && !((v[0]==rival_king_pos[0]) && (v[1]==rival_king_pos[1]))
-                            );
-                        }
-                    }
-                });
+                    });
+                }
                 check_movea.push([ypos,xpos]);
                 console.log('a:'+check_movea);
                 this.state.check_path = check_movea;
@@ -1214,8 +1255,14 @@ export default class Game extends React.Component{
         }
 
         this.draw();
-        this.check(this.state.promotion[1],this.state.promotion[0],this.state.next,pc);
-        this.checkmate();
+        //승부 판정
+        if(this.state.game!='draw'){
+            this.check(this.state.promotion[1],this.state.promotion[0],this.state.next,pc);
+            if(this.state.check_path==null){
+                this.calc_all_moveable(this.state.next,[],true);
+            }
+            this.checkmate();
+        }
 
         this.setState({
             // history: history,
