@@ -92,6 +92,7 @@ export default class Game extends React.Component{
         this.state = {
             // history: [{squares: Array(64).fill(null)}],
             history: [{squares: row}],
+            stepNumber: 0,
             selected:[],
             moveable:[],
             next: 'white',
@@ -122,8 +123,23 @@ export default class Game extends React.Component{
     }
 
     selectedPiece(p){
-        const history=this.state.history;
-        const current=history[0];
+        // const history = this.state.history;
+        // const current = history[0];
+        const history = this.state.history.slice(0,this.state.stepNumber+1);
+        console.log(history);
+        const current = history[history.length-1];
+        const squares = [];
+        for(let i=0;i<8;i++){
+            let square_rows = [];
+            for(let j=0;j<8;j++){
+                square_rows.push({
+                    value: current.squares[i][j].value,
+                    camp: current.squares[i][j].camp,
+                    piece: current.squares[i][j].piece
+                });
+            }
+            squares.push(square_rows);
+        }
         let rival = (this.state.next=='white'? 'black':'white');
         //현재 선택한 칸의 좌표를 저장할 변수
         let po=[];
@@ -252,16 +268,16 @@ export default class Game extends React.Component{
                 }
 
                 console.log(sval+","+spos);
-                current.squares[po[0]][po[1]].value=sval; //현재 클릭한 칸을 html상에 출력된 선택된 말 정보로 변경(표시값)
-                current.squares[spos[0]][spos[1]].value=''; //html상에 출력된 선택된 말의 원래 좌표의 칸을 비우기
+                squares[po[0]][po[1]].value=sval; //현재 클릭한 칸을 html상에 출력된 선택된 말 정보로 변경(표시값)
+                squares[spos[0]][spos[1]].value=''; //html상에 출력된 선택된 말의 원래 좌표의 칸을 비우기
                 console.log(current.squares[po[0]][po[1]].value);
                 
-                current.squares[po[0]][po[1]].camp=scmp; //현재 클릭한 칸을 html상에 출력된 선택된 말 정보로 변경(진영)
-                current.squares[spos[0]][spos[1]].camp=''; //html상에 출력된 선택된 말의 원래 좌표의 칸을 비우기
+                squares[po[0]][po[1]].camp=scmp; //현재 클릭한 칸을 html상에 출력된 선택된 말 정보로 변경(진영)
+                squares[spos[0]][spos[1]].camp=''; //html상에 출력된 선택된 말의 원래 좌표의 칸을 비우기
                 console.log(current.squares[po[0]][po[1]].camp);
                 
-                current.squares[po[0]][po[1]].piece=spc; //현재 클릭한 칸을 html상에 출력된 선택된 말 정보로 변경(말 종류)
-                current.squares[spos[0]][spos[1]].piece=''; //html상에 출력된 선택된 말의 원래 좌표의 칸을 비우기
+                squares[po[0]][po[1]].piece=spc; //현재 클릭한 칸을 html상에 출력된 선택된 말 정보로 변경(말 종류)
+                squares[spos[0]][spos[1]].piece=''; //html상에 출력된 선택된 말의 원래 좌표의 칸을 비우기
                 console.log(current.squares[po[0]][po[1]].piece);
 
                 
@@ -316,6 +332,8 @@ export default class Game extends React.Component{
                     //이동 후 선택된 말 정보 초기화, 플레이어 순서 변경
                     this.setState({
                         // history: history,
+                        history: history.concat([{squares: squares}]), //배열에 추가
+                        stepNumber: history.length,
                         selected:[],
                         moveable:[],
                         next: (this.state.next=='white'? 'black':'white')
@@ -341,8 +359,8 @@ export default class Game extends React.Component{
     //선택한 말의 이동가능한 칸을 계산하는 함수
     //선택된 칸의 좌표만 받는것 문제
     pawn_moveable(xpos,ypos,camp,movea_space){
-        const history=this.state.history;
-        const current=history[0];
+        const history = this.state.history.slice(0,this.state.stepNumber+1);
+        const current = history[history.length-1];
         if(camp=='white'){
             if((ypos-1)>=0 && current.squares[ypos-1][xpos].value==''){ //폰의 한 칸 앞이 존재하고 비었다면
                 console.log((ypos-1)+","+xpos);
@@ -435,8 +453,8 @@ export default class Game extends React.Component{
         }
     }
     rook_moveable(xpos,ypos,camp,movea_space,check){
-        const history=this.state.history;
-        const current=history[0];
+        const history = this.state.history.slice(0,this.state.stepNumber+1);
+        const current = history[history.length-1];
         let rival = (camp=='white'? 'black':'white');
         let rival_king_pos = (camp=='white'? this.state.black_king_pos:this.state.white_king_pos);
         let rival_king_movea = [];
@@ -618,8 +636,8 @@ export default class Game extends React.Component{
         // }
     }
     bishop_moveable(xpos,ypos,camp,movea_space,check){
-        const history=this.state.history;
-        const current=history[0];
+        const history = this.state.history.slice(0,this.state.stepNumber+1);
+        const current = history[history.length-1];
         let rival = (camp=='white'? 'black':'white');
         let rival_king_pos = (camp=='white'? this.state.black_king_pos:this.state.white_king_pos);
         let rival_king_movea = [];
@@ -797,8 +815,8 @@ export default class Game extends React.Component{
         }
     }
     knight_moveable(xpos,ypos,camp,movea_space){
-        const history=this.state.history;
-        const current=history[0];
+        const history = this.state.history.slice(0,this.state.stepNumber+1);
+        const current = history[history.length-1];
         console.log(ypos+","+xpos);
         //좌측 상하
         if(xpos-2>=0){
@@ -893,8 +911,8 @@ export default class Game extends React.Component{
         }
     }
     king_moveable(xpos,ypos,camp,movea_space){
-        const history=this.state.history;
-        const current=history[0];
+        const history = this.state.history.slice(0,this.state.stepNumber+1);
+        const current = history[history.length-1];
         if(xpos-1>=0){
             if(current.squares[ypos][xpos-1].camp!=camp){
                 movea_space.push([ypos,(xpos-1)]);
@@ -951,8 +969,8 @@ export default class Game extends React.Component{
         }
     }
     calc_all_moveable(camp,movea_space,check){
-        const history=this.state.history;
-        const current=history[0];
+        const history = this.state.history.slice(0,this.state.stepNumber+1);
+        const current = history[history.length-1];
         let check_flag = false;
         console.log(camp);
         for(let i=0;i<8;i++){
@@ -1238,12 +1256,27 @@ export default class Game extends React.Component{
     
 
     promotion(val,pc){
-        const history = this.state.history;
-        const current = history[0];
+        // const history = this.state.history;
+        // const current = history[0];
+        const history = this.state.history.slice(0,this.state.stepNumber+1);
+        console.log(history);
+        const current = history[history.length-1];
+        const squares = [];
+        for(let i=0;i<8;i++){
+            let square_rows = [];
+            for(let j=0;j<8;j++){
+                square_rows.push({
+                    value: current.squares[i][j].value,
+                    camp: current.squares[i][j].camp,
+                    piece: current.squares[i][j].piece
+                });
+            }
+            squares.push(square_rows);
+        }
 
         console.log(val+','+pc+','+this.state.promotion);
-        current.squares[this.state.promotion[0]][this.state.promotion[1]].value = val;
-        current.squares[this.state.promotion[0]][this.state.promotion[1]].piece = pc;
+        squares[this.state.promotion[0]][this.state.promotion[1]].value = val;
+        squares[this.state.promotion[0]][this.state.promotion[1]].piece = pc;
 
         let rival_pieces = (this.state.next=='white'?this.state.black_pieces:this.state.white_pieces);
         if(this.state.next=='white'){
@@ -1266,6 +1299,8 @@ export default class Game extends React.Component{
 
         this.setState({
             // history: history,
+            history: history.concat([{squares: squares}]), //배열에 추가
+            stepNumber: history.length,
             selected:[],
             moveable:[],
             next: (this.state.next=='white'? 'black':'white'),
@@ -1278,9 +1313,30 @@ export default class Game extends React.Component{
     }
 
 
+    jumpTo(step){
+        this.setState({
+            stepNumber: step,
+            next: ((step%2)===0?'white':'black')
+        });
+    }
+
+
     render(){
         const history = this.state.history;
-        const current = history[0];
+        // const current = history[0];
+        const current = history[this.state.stepNumber];
+
+        const moves = history.map((step,move)=>{ //배열을 가공하여 새로운 배열 반환(item,index)
+            const desc = move? 'go to move #'+move:'go to game start';
+
+            return(
+                <li key={move}>
+                    <button onClick={()=>this.jumpTo(move)}>
+                        {desc}
+                    </button>
+                </li>
+            );
+        });
 
         return(
             <div className="game">
@@ -1293,6 +1349,7 @@ export default class Game extends React.Component{
                 </div>
                 <div id="selected">
                     <p>now: {this.state.next}</p>
+                    <ol>{moves}</ol>
                     <ul>
                         <li id="sval">{this.state.selected[0]}</li>
                         <li id="spos">{this.state.selected[1]}</li>
