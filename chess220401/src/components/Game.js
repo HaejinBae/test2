@@ -91,41 +91,40 @@ export default class Game extends React.Component{
 
         this.state = {
             // history: [{squares: Array(64).fill(null)}],
-            history: [{squares: row}],
+            history: [{
+                squares: row,
+                black_king_pos: [0,4],
+                white_king_pos: [7,4],
+                check_path: [],
+                game: 'continue',
+                white_pieces: {
+                    king:  1,
+                    queen:  1,
+                    bishop:  2,
+                    knight:  2,
+                    rook:  2,
+                    pawn:  8
+                },
+                black_pieces: {
+                    king:  1,
+                    queen:  1,
+                    bishop:  2,
+                    knight:  2,
+                    rook:  2,
+                    pawn:  8
+                }
+            }],
             stepNumber: 0,
             selected:[],
             moveable:[],
             next: 'white',
-            black_king_pos: [[0,4]],
-            white_king_pos: [[7,4]],
-            check_path: [[]],
-            promotion: null,
-            game: ['continue'],
-            white_pieces: [{
-                king: 1,
-                queen: 1,
-                bishop: 2,
-                knight: 2,
-                rook: 2,
-                pawn: 8
-            }],
-            black_pieces: [{
-                king: 1,
-                queen: 1,
-                bishop: 2,
-                knight: 2,
-                rook: 2,
-                pawn: 8
-            }]
+            promotion: null
         };
         console.log(this.state.history);
     }
 
     selectedPiece(p){
-        // const history = this.state.history;
-        // const current = history[0];
         const history = this.state.history.slice(0,this.state.stepNumber+1);
-        console.log(history);
         const current = history[history.length-1];
         const squares = [];
         for(let i=0;i<8;i++){
@@ -139,42 +138,31 @@ export default class Game extends React.Component{
             }
             squares.push(square_rows);
         }
-        const w_king_pos = this.state.white_king_pos.slice(0,this.state.stepNumber+1);
-        const b_king_pos = this.state.black_king_pos.slice(0,this.state.stepNumber+1);
-        const current_w_king_pos = w_king_pos[w_king_pos.length-1];
-        const current_b_king_pos = b_king_pos[b_king_pos.length-1];
-        const chk_path = this.state.check_path.slice(0,this.state.stepNumber+1);
-        let current_chk_path = chk_path[chk_path.length-1];
-        let game = this.state.game.slice(0,this.state.stepNumber+1);
-        let current_game = game[game.length-1];
-        const white_pieces = this.state.white_pieces.slice(0,this.state.stepNumber+1);
-        const current_w_pieces = white_pieces[white_pieces.length-1];
-        const w_pieces = [];
-        for(let j=0;j<current_w_pieces.length;j++){
-            w_pieces.push({
-                king: current_w_pieces[j].king,
-                queen: current_w_pieces[j].queen,
-                bishop: current_w_pieces[j].bishop,
-                knight: current_w_pieces[j].knight,
-                rook: current_w_pieces[j].rook,
-                pawn: current_w_pieces[j].pawn
-            });
-        }
-        const black_pieces = this.state.black_pieces.slice(0,this.state.stepNumber+1);
-        const current_b_pieces = black_pieces[black_pieces.length-1];
-        const b_pieces = [];
-        for(let j=0;j<current_b_pieces.length;j++){
-            b_pieces.push({
-                king: current_b_pieces[j].king,
-                queen: current_b_pieces[j].queen,
-                bishop: current_b_pieces[j].bishop,
-                knight: current_b_pieces[j].knight,
-                rook: current_b_pieces[j].rook,
-                pawn: current_b_pieces[j].pawn
-            });
-        }
+        let w_king_pos = current.white_king_pos.slice();
+        let b_king_pos = current.black_king_pos.slice();
+        let chk_path = current.check_path.slice();
+        let game = current.game.slice();
+        const white_pieces = current.white_pieces;
+        const w_pieces = {
+            king:  white_pieces.king,
+            queen:  white_pieces.queen,
+            bishop:  white_pieces.bishop,
+            knight:  white_pieces.knight,
+            rook:  white_pieces.rook,
+            pawn:  white_pieces.pawn
+        };
+        const black_pieces = current.black_pieces;
+        const b_pieces = {
+            king:  black_pieces.king,
+            queen:  black_pieces.queen,
+            bishop:  black_pieces.bishop,
+            knight:  black_pieces.knight,
+            rook:  black_pieces.rook,
+            pawn:  black_pieces.pawn
+        };
+        console.log(black_pieces);
         let rival = (this.state.next=='white'? 'black':'white');
-        let rival_king_pos = (this.state.next=='white'? current_b_king_pos:current_w_king_pos);
+        let rival_king_pos = (this.state.next=='white'? b_king_pos:w_king_pos);
         //현재 선택한 칸의 좌표를 저장할 변수
         let po=[];
         //이동 가능한 칸의 좌표를 저장할 배열
@@ -225,7 +213,7 @@ export default class Game extends React.Component{
                  let next_rival = (this.state.next=='white'? 'black':'white');
                 // console.log("next_rival:"+next_rival);
                 if(movea.length>0){
-                    this.calc_all_moveable(squares,rival_king_pos,current_chk_path,next_rival,unmovea);
+                    this.calc_all_moveable(squares,rival_king_pos,next_rival,unmovea);
                     
                     unmovea = new Set(unmovea);
                     console.log(unmovea);
@@ -241,16 +229,16 @@ export default class Game extends React.Component{
             console.log('movea'+movea);
             
             //체크 상황에 움직일 수 있는 경로
-            if(current_chk_path.length>0){
-                console.log('c:'+current_chk_path);
+            if(chk_path.length>0){
+                console.log('c:'+chk_path);
                 console.log('d:'+movea);
                 if(p[3]!='king'){
                     let a_check_movea = [];
-                    for(let j=0;j<current_chk_path.length;j++){
-                        console.log(current_chk_path[j][0]+','+current_chk_path[j][1]);
+                    for(let j=0;j<chk_path.length;j++){
+                        console.log(chk_path[j][0]+','+chk_path[j][1]);
                         for(let i=0;i<movea.length;i++){
-                            if(movea[i][0]==current_chk_path[j][0] && movea[i][1]==current_chk_path[j][1]){
-                                a_check_movea.push(current_chk_path[j]);
+                            if(movea[i][0]==chk_path[j][0] && movea[i][1]==chk_path[j][1]){
+                                a_check_movea.push(chk_path[j]);
                             }
                         }
                     }
@@ -317,11 +305,11 @@ export default class Game extends React.Component{
                 
                 if(spc=='king'){
                     if(scmp=='white'){
-                        current_w_king_pos = po;
+                        w_king_pos = po;
                     }else if(scmp=='black'){
-                        current_b_king_pos = po;
+                        b_king_pos = po;
                     }
-                    current_chk_path = [];
+                    chk_path = [];
                 }else{
                     //프로모션
                     if(spc=='pawn'){
@@ -351,31 +339,33 @@ export default class Game extends React.Component{
                 
                 
                 if(this.state.promotion==null){
-                    this.draw(current_game);
+                    game = this.draw(w_pieces,b_pieces);
                     //승부 판정
                     console.log('55555555555555555555555555555555555555555555');
-                    console.log(current_game);
-                    if(current_game!='draw'){
+                    console.log(game);
+                    if(game!='draw'){
                         if(spc!='king'){
                             //체크 판단
-                            this.check(squares,rival_king_pos,current_chk_path,po[1],po[0],scmp,spc);
+                            chk_path = this.check(squares,rival_king_pos,po[1],po[0],scmp,spc);
                         }
-                        if(current_chk_path.length==0){
-                            this.calc_all_moveable(squares,rival_king_pos,current_chk_path,this.state.next,[],true);
+                        if(chk_path.length==0){
+                            chk_path = this.calc_all_moveable(squares,rival_king_pos,this.state.next,[],true);
                         }
-                        this.checkmate(squares,rival_king_pos,current_chk_path,current_game);
+                        game = this.checkmate(squares,rival_king_pos,chk_path);
                     }
                     //이동 후 선택된 말 정보 초기화, 플레이어 순서 변경
                     this.setState({
                         // history: history,
-                        history: history.concat([{squares: squares}]), //배열에 추가
+                        history: history.concat([{
+                            squares: squares,
+                            black_king_pos: b_king_pos,
+                            white_king_pos: w_king_pos,
+                            check_path: chk_path,
+                            game: game,
+                            white_pieces: w_pieces,
+                            black_pieces: b_pieces
+                        }]), //배열에 추가
                         stepNumber: history.length,
-                        black_king_pos: b_king_pos.concat([current_b_king_pos]),
-                        white_king_pos: w_king_pos.concat([current_w_king_pos]),
-                        check_path: chk_path.concat([current_chk_path]),
-                        game: game.concat([current_game]),
-                        white_pieces: white_pieces.concat([w_pieces]),
-                        black_pieces: black_pieces.concat([b_pieces]),
                         selected:[],
                         moveable:[],
                         next: (this.state.next=='white'? 'black':'white')
@@ -394,7 +384,7 @@ export default class Game extends React.Component{
             for(let i=0;i<this.state.moveable.length;i++){
                 document.getElementsByClassName("board-row")[this.state.moveable[i][0]].children[this.state.moveable[i][1]].classList.remove('moveable');
             }
-            console.log(current_game);
+            console.log(game);
         }
 
     }
@@ -402,8 +392,6 @@ export default class Game extends React.Component{
     //선택한 말의 이동가능한 칸을 계산하는 함수
     //선택된 칸의 좌표만 받는것 문제
     pawn_moveable(sqrs,xpos,ypos,camp,movea_space){
-        const history = this.state.history.slice(0,this.state.stepNumber+1);
-        const current = history[history.length-1];
         const squares = sqrs;
         if(camp=='white'){
             if((ypos-1)>=0 && squares[ypos-1][xpos].value==''){ //폰의 한 칸 앞이 존재하고 비었다면
@@ -1009,8 +997,9 @@ export default class Game extends React.Component{
             movea_space.push([(ypos-1),xpos]);
         }
     }
-    calc_all_moveable(sqrs,r_king_pos,cur_chk_path,camp,movea_space,check){
+    calc_all_moveable(sqrs,r_king_pos,camp,movea_space,check){
         const squares = sqrs;
+        let cur_chk_path = [];
         let check_flag = false;
         console.log(camp);
         for(let i=0;i<8;i++){
@@ -1020,7 +1009,7 @@ export default class Game extends React.Component{
                     console.log(squares[i][j].camp + squares[i][j].piece);
                     if(check){
                         //체크 판단
-                        this.check(squares,r_king_pos,cur_chk_path,j,i,camp,squares[i][j].piece);
+                        cur_chk_path = this.check(squares,r_king_pos,j,i,camp,squares[i][j].piece);
                         if(cur_chk_path.length>0){
                             check_flag = true;
                             break;
@@ -1036,6 +1025,10 @@ export default class Game extends React.Component{
         }
         //movea_space = new Set(movea_space);
         //console.log(movea_space);
+        if(check){
+            return cur_chk_path;
+        }
+        return;
     }
 
     calc_moveable(sqrs,r_king_pos,xpos,ypos,piece,camp,movea_space,check){
@@ -1118,9 +1111,9 @@ export default class Game extends React.Component{
 
 
 
-    check(sqrs,r_king_pos,cur_chk_path,xpos,ypos,camp,piece){
+    check(sqrs,r_king_pos,xpos,ypos,camp,piece){
         const squares = sqrs;
-        let current_chk_path = [];
+        let chk_path = [];
         //움직인 말의 다음 경로를 저장하여 킹이 해당 경로에 포함되는지 확인하기 위한 배열 
         let chk_check = [];
         let rival_king_pos = r_king_pos;
@@ -1169,27 +1162,19 @@ export default class Game extends React.Component{
                 }
                 check_movea.push([ypos,xpos]);
                 console.log('a:'+check_movea);
-                current_chk_path = check_movea;
+                chk_path = check_movea;
 
                 break;
             }
         }
-        console.log('checked?'+current_chk_path);
-        // this.checkmate(rival_king_pos);
-        if(current_chk_path.length>0){
-            for(let i=0;i<current_chk_path.length;i++){
-                cur_chk_path.push(current_chk_path[i]);
-            }
-            // console.log('##########check##########');
-            // this.state.game = 'check';
-        }
+        console.log('checked?'+chk_path);
+
+        return chk_path;
     }
 
-    checkmate(sqrs,r_king_pos,cur_chk_path,cur_game){
+    checkmate(sqrs,r_king_pos,cur_chk_path){
         const squares = sqrs;
-        const current_chk_path = cur_chk_path;
-        let game = this.state.game.slice(0,this.state.stepNumber+1);
-        let current_game = game[game.length-1];
+        let chk_path = cur_chk_path;
         //체크메이트
         let rival_king_pos = r_king_pos;
         let rival_king_movea = [];
@@ -1202,7 +1187,7 @@ export default class Game extends React.Component{
 
         //상대 킹이 움직일 수 있는 경로
         if(rival_king_movea.length>0){
-            this.calc_all_moveable(squares,rival_king_pos,current_chk_path,this.state.next,rival_king_unmovea);
+            this.calc_all_moveable(squares,rival_king_pos,this.state.next,rival_king_unmovea);
 
             rival_king_unmovea = new Set(rival_king_unmovea);
             console.log(rival_king_unmovea);
@@ -1217,18 +1202,18 @@ export default class Game extends React.Component{
 
         //체크한 말을 막거나 잡을 수 있는 말
         let flag=false;
-        if(current_chk_path.length>0){
+        if(chk_path.length>0){
             flag = true;
-            this.calc_all_moveable(squares,rival_king_pos,current_chk_path,next_rival,check_unmovea);
+            this.calc_all_moveable(squares,rival_king_pos,next_rival,check_unmovea);
 
             check_unmovea = new Set(check_unmovea);
             console.log(check_unmovea);
 
 
             for(let item of check_unmovea.keys()){
-                for(let i=0;i<current_chk_path.length;i++){
-                    console.log(i+item+':'+current_chk_path[i]);
-                    if(item[0]==current_chk_path[i][0] && item[1]==current_chk_path[i][1]){
+                for(let i=0;i<chk_path.length;i++){
+                    console.log(i+item+':'+chk_path[i]);
+                    if(item[0]==chk_path[i][0] && item[1]==chk_path[i][1]){
                         flag = false;
                         break;
                     }
@@ -1236,73 +1221,48 @@ export default class Game extends React.Component{
                 if(!flag) break;
             }
         }
-        console.log(current_chk_path);
+        console.log('222222222222'+chk_path);
         console.log(flag);
         if(rival_king_movea.length==0){
-            if(current_chk_path.length==0){
+            if(chk_path.length==0){
                 let next_movea = [];
-                this.calc_all_moveable(squares,rival_king_pos,current_chk_path,next_rival,next_movea);
+                this.calc_all_moveable(squares,rival_king_pos,next_rival,next_movea);
                 if(next_movea.length==0){
                     console.log('-----------stalemate----------');
-                    cur_game.replace('continue','stalemate');
                     for(let i=0;i<64;i++){
                         document.getElementsByClassName("square")[i].disabled = true;
                     }
+                    return ('stalemate');
                 }else{
                     console.log('=======continue========');
-                    cur_game.replace('continue','continue');
+                    return ('continue');
                 }
-            }else if(flag && current_chk_path.length>0){
+            }else if(flag && chk_path.length>0){
                 console.log('!!!!!!!!!!!!!!!!!checkmate!!!!!!!!!!!!!!!!!');
-                cur_game.replace('continue','checkmate');
                 for(let i=0;i<64;i++){
                     document.getElementsByClassName("square")[i].disabled = true;
                 }
+                return ('checkmate');
             }else{
                 console.log('##########check##########');
-                cur_game.replace('continue','check');
                 console.log('=======continue========');
+                return ('check');
             }
         }else{
-            if(current_chk_path.length>0){
+            if(chk_path.length>0){
                 console.log('##########check##########');
-                cur_game.replace('continue','check');
+                console.log('=======continue========');
+                return ('check');
             }else{
-                cur_game.replace('continue','continue');
+                console.log('=======continue========');
+                return ('continue');
             }
-            console.log('=======continue========');
         }
     }
 
-    draw(cur_game){
-        let game = this.state.game.slice(0,this.state.stepNumber+1);
-        let current_game = game[game.length-1];
-        const white_pieces = this.state.white_pieces.slice(0,this.state.stepNumber+1);
-        const current_w_pieces = white_pieces[white_pieces.length-1];
-        const w_pieces = [];
-        for(let j=0;j<current_w_pieces.length;j++){
-            w_pieces.push({
-                king: current_w_pieces[j].king,
-                queen: current_w_pieces[j].queen,
-                bishop: current_w_pieces[j].bishop,
-                knight: current_w_pieces[j].knight,
-                rook: current_w_pieces[j].rook,
-                pawn: current_w_pieces[j].pawn
-            });
-        }
-        const black_pieces = this.state.black_pieces.slice(0,this.state.stepNumber+1);
-        const current_b_pieces = black_pieces[black_pieces.length-1];
-        const b_pieces = [];
-        for(let j=0;j<current_b_pieces.length;j++){
-            b_pieces.push({
-                king: current_b_pieces[j].king,
-                queen: current_b_pieces[j].queen,
-                bishop: current_b_pieces[j].bishop,
-                knight: current_b_pieces[j].knight,
-                rook: current_b_pieces[j].rook,
-                pawn: current_b_pieces[j].pawn
-            });
-        }
+    draw(w_pc,b_pc){
+        const w_pieces = w_pc;
+        const b_pieces = b_pc;
         let next_pieces = (this.state.next=='black'?b_pieces:w_pieces);
         let rival_pieces = (this.state.next=='white'?b_pieces:w_pieces);
         if(rival_pieces.queen==0 && rival_pieces.bishop==0 && 
@@ -1314,26 +1274,25 @@ export default class Game extends React.Component{
                     || (next_pieces.bishop==0 && next_pieces.knight==1)){
                     //draw
                     console.log('&&&&&&&&&&&draw&&&&&&&&&&');
-                    cur_game.replace('continue','draw');
                     for(let i=0;i<64;i++){
                         document.getElementsByClassName("square")[i].disabled = true;
                     }
+                    return ('draw');
                 }else if(next_pieces.bishop==0 && next_pieces.knight==0){
                     //draw
                     console.log('&&&&&&&&&&&draw&&&&&&&&&&');
-                    cur_game.replace('continue','draw');
                     for(let i=0;i<64;i++){
                         document.getElementsByClassName("square")[i].disabled = true;
                     }
+                    return ('draw');
                 }
             }
         }
+        return ('continue');
     }
     
 
     promotion(val,pc){
-        // const history = this.state.history;
-        // const current = history[0];
         const history = this.state.history.slice(0,this.state.stepNumber+1);
         console.log(history);
         const current = history[history.length-1];
@@ -1349,41 +1308,29 @@ export default class Game extends React.Component{
             }
             squares.push(square_rows);
         }
-        const w_king_pos = this.state.white_king_pos.slice(0,this.state.stepNumber+1);
-        const b_king_pos = this.state.black_king_pos.slice(0,this.state.stepNumber+1);
-        const current_w_king_pos = w_king_pos[w_king_pos.length-1];
-        const current_b_king_pos = b_king_pos[b_king_pos.length-1];
-        const chk_path = this.state.check_path.slice(0,this.state.stepNumber+1);
-        let current_chk_path = chk_path[chk_path.length-1];
-        let game = this.state.game.slice(0,this.state.stepNumber+1);
-        let current_game = game[game.length-1];
-        const white_pieces = this.state.white_pieces.slice(0,this.state.stepNumber+1);
-        const current_w_pieces = white_pieces[white_pieces.length-1];
-        const w_pieces = [];
-        for(let j=0;j<current_w_pieces.length;j++){
-            w_pieces.push({
-                king: current_w_pieces[j].king,
-                queen: current_w_pieces[j].queen,
-                bishop: current_w_pieces[j].bishop,
-                knight: current_w_pieces[j].knight,
-                rook: current_w_pieces[j].rook,
-                pawn: current_w_pieces[j].pawn
-            });
-        }
-        const black_pieces = this.state.black_pieces.slice(0,this.state.stepNumber+1);
-        const current_b_pieces = black_pieces[black_pieces.length-1];
-        const b_pieces = [];
-        for(let j=0;j<current_b_pieces.length;j++){
-            b_pieces.push({
-                king: current_b_pieces[j].king,
-                queen: current_b_pieces[j].queen,
-                bishop: current_b_pieces[j].bishop,
-                knight: current_b_pieces[j].knight,
-                rook: current_b_pieces[j].rook,
-                pawn: current_b_pieces[j].pawn
-            });
-        }
-        let rival_king_pos = (this.state.next=='white'? current_b_king_pos:current_w_king_pos);
+        let w_king_pos = current.white_king_pos.slice();
+        let b_king_pos = current.black_king_pos.slice();
+        let chk_path = current.check_path.slice();
+        let game = current.game.slice();
+        const white_pieces = current.white_pieces;
+        const w_pieces = {
+            king:  white_pieces.king,
+            queen:  white_pieces.queen,
+            bishop:  white_pieces.bishop,
+            knight:  white_pieces.knight,
+            rook:  white_pieces.rook,
+            pawn:  white_pieces.pawn
+        };
+        const black_pieces = current.black_pieces;
+        const b_pieces = {
+            king:  black_pieces.king,
+            queen:  black_pieces.queen,
+            bishop:  black_pieces.bishop,
+            knight:  black_pieces.knight,
+            rook:  black_pieces.rook,
+            pawn:  black_pieces.pawn
+        };
+        let rival_king_pos = (this.state.next=='white'? b_king_pos:w_king_pos);
 
         console.log(val+','+pc+','+this.state.promotion);
         squares[this.state.promotion[0]][this.state.promotion[1]].value = val;
@@ -1398,26 +1345,28 @@ export default class Game extends React.Component{
             console.log('white pieces?'+pc+w_pieces[pc]);
         }
 
-        this.draw(current_game);
+        game = this.draw(w_pieces,b_pieces);
         //승부 판정
-        if(current_game[0]!='draw'){
-            this.check(squares,rival_king_pos,current_chk_path,this.state.promotion[1],this.state.promotion[0],this.state.next,pc);
-            if(current_chk_path.length==0){
-                this.calc_all_moveable(squares,rival_king_pos,current_chk_path,this.state.next,[],true);
+        if(game!='draw'){
+            chk_path = this.check(squares,rival_king_pos,this.state.promotion[1],this.state.promotion[0],this.state.next,pc);
+            if(chk_path.length==0){
+                chk_path = this.calc_all_moveable(squares,rival_king_pos,this.state.next,[],true);
             }
-            this.checkmate(squares,rival_king_pos,current_chk_path,current_game);
+            game = this.checkmate(squares,rival_king_pos,chk_path);
         }
 
         this.setState({
             // history: history,
-            history: history.concat([{squares: squares}]), //배열에 추가
+            history: history.concat([{
+                squares: squares,
+                black_king_pos: b_king_pos,
+                white_king_pos: w_king_pos,
+                check_path: chk_path,
+                game: game,
+                white_pieces: w_pieces,
+                black_pieces: b_pieces
+            }]), //배열에 추가
             stepNumber: history.length,
-            black_king_pos: b_king_pos.concat([current_b_king_pos]),
-            white_king_pos: w_king_pos.concat([current_w_king_pos]),
-            check_path: chk_path.concat([current_chk_path]),
-            game: game.concat(current_game),
-            white_pieces: white_pieces.concat([w_pieces]),
-            black_pieces: black_pieces.concat([b_pieces]),
             selected:[],
             moveable:[],
             next: (this.state.next=='white'? 'black':'white'),
@@ -1433,8 +1382,20 @@ export default class Game extends React.Component{
     jumpTo(step){
         this.setState({
             stepNumber: step,
+            selected:[],
+            moveable:[],
+            promotion: null,
             next: ((step%2)===0?'white':'black')
         });
+        if(!(this.state.game=='continue' || this.state.game=='continue')){
+            for(let i=0;i<64;i++){
+                document.getElementsByClassName("square")[i].disabled = false;
+            }
+        }
+        for(let i=0;i<64;i++){
+            document.getElementsByClassName("square-container")[i].classList.remove('selected');
+            document.getElementsByClassName("square-container")[i].classList.remove('moveable');
+        }
     }
 
 
@@ -1442,8 +1403,7 @@ export default class Game extends React.Component{
         const history = this.state.history;
         // const current = history[0];
         const current = history[this.state.stepNumber];
-        let game = this.state.game;
-        let current_game = game[this.state.stepNumber];
+        let game = current.game;
 
         const moves = history.map((step,move)=>{ //배열을 가공하여 새로운 배열 반환(item,index)
             const desc = move? 'go to move #'+move:'go to game start';
@@ -1459,7 +1419,7 @@ export default class Game extends React.Component{
 
         return(
             <div className="game">
-                <h1>{current_game}</h1>
+                <h1>{game}</h1>
                 <div className="container">
                     <div className="game-board">
                         <Board select={(p)=>this.selectedPiece(p)} squares={current.squares}/>
