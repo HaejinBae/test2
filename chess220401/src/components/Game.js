@@ -1593,6 +1593,7 @@ export default class Game extends React.Component{
                 for(let i=0;i<chk_path.length;i++){
                     console.log(i+item+':'+chk_path[i]);
                     if(item[0]==chk_path[i][0] && item[1]==chk_path[i][1]){
+                        console.log(item);
                         flag = false;
                         break;
                     }
@@ -1797,7 +1798,6 @@ export default class Game extends React.Component{
 
         return(
             <div className="game">
-                <h1>{game}</h1>
                 <div className="container">
                     <div className="game-board">
                         <Board select={(p)=>this.selectedPiece(p)} squares={current.squares}/>
@@ -1806,6 +1806,7 @@ export default class Game extends React.Component{
                 </div>
                 <div id="game-info">
                     <p>now: {this.state.next}</p>
+                    <h1>{game}</h1>
                     <ol>{moves}</ol>
                 </div>
                 <div id="selected">

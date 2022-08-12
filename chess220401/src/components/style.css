@@ -13,8 +13,23 @@
 #selected, #pieces{
     clear: both;
 }
+#selected{
+    display: none;
+}
 #game-info{
     display: inline-block;
+    font-weight: bold;
+    font-size: 30px;
+}
+h1, p{
+    margin: 0;
+    padding: 0;
+}
+#game-info ol{
+    font-size: 20px;
+    height: 320px;
+    width:200px;
+    overflow-y: scroll;
 }
 #pieces.hidden{
     display: none;
