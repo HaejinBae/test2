@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<style>
+    .con{
+        position:relative;
+    }
+    .profile img{
+        width:100px;
+        height:100px;
+        background-color:gray;
+    }
+    #uploadBox{
+        position:absolute;
+        left: 0;
+        top:0;
+        width:100px;
+        height:100px;
+        background-color: transparent;
+        z-index: 50;
+        color: transparent;
+    }
+    input::-webkit-file-upload-button{
+        display: none;
+    }
+</style>
+<body>
+    <form name="form1" class="con">
+        <div class="profile">
+        <input type="file" name="file" id="uploadBox">
+        <img class="profile-img">
+        </div>
+    </form>
+</body>
+<script>
+    document.getElementById("uploadBox").addEventListener("change", function(){
+        let imgEl = document.querySelector(".profile img");
+        
+        let fileURL = URL.createObjectURL(this.files[0]);
+        imgEl.src = fileURL;
+    });
+</script>
+</html>
